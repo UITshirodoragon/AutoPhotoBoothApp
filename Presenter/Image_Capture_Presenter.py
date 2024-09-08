@@ -46,8 +46,7 @@ class ImageCapturePresenter:
 
     def handle_update_image(self) -> None:
         frame = self.model.get_frame()
-        if frame is not None:
-            
+        if frame is not None:       
             self.view.update_image_gui(frame)
 
     def handle_update_fps(self) -> None:
