@@ -14,11 +14,11 @@ class ImageCapturePresenter(Protocol):
         ...
 
 
-class ImageCaptureView(QWidget):
+class ImageCaptureView(QMainWindow):
     def __init__(self) -> None:
         #super().__init__()
         super(ImageCaptureView, self).__init__()
-        loadUi('Image_Capture_View.ui', self)
+        loadUi('View/Image_Capture_View.ui', self)
         '''self.setWindowTitle("Camera App with MVP Architecture")
 
         # Thiết lập các thành phần GUI
