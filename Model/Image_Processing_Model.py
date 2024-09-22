@@ -59,11 +59,10 @@ class ImageProcessingModel:
         while True:
             frame = camera.capture_frame()
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            frame = cv2.resize(frame, (450, 600))
             frame_queue.put(frame)
             self.calculate_preview_fps(fps_queue)
         
-
-
     def get_frame(self) -> MatLike:
         if not self.preview_image_queue.empty():
             return self.preview_image_queue.get()
