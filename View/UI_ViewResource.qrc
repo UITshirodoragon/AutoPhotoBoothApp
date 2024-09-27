@@ -1,0 +1,24 @@
+<RCC>
+  <qresource prefix="View">
+    <file>Icon/restart_icon.png</file>
+    <file>Icon/Capture_button.png</file>
+    <file>Icon/down_arrow.png</file>
+    <file>Icon/flash_off.png</file>
+    <file>Icon/flash_on.png</file>
+    <file>Icon/gallery_button_image.png</file>
+    <file>Icon/gif.png</file>
+    <file>Icon/left_arrow.png</file>
+    <file>Icon/left-arrow-solid-24.png</file>
+    <file>Icon/quit_button.png</file>
+    <file>Icon/return_button_image.png</file>
+    <file>Icon/right_arrow.png</file>
+    <file>Icon/right-arrow-solid-24.png</file>
+    <file>Icon/set_countdown_3.png</file>
+    <file>Icon/set_countdown_5.png</file>
+    <file>Icon/set_countdown_10.png</file>
+    <file>Icon/tag-x-solid-24.png</file>
+    <file>Icon/tag-x-solid-48.png</file>
+    <file>Icon/tag-x-solid-72.png</file>
+    <file>Icon/up_arrow.png</file>
+  </qresource>
+</RCC>
