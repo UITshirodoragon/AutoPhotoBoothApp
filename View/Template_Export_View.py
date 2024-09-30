@@ -33,7 +33,7 @@ class TemplateExportView(QWidget, Ui_TemplateExportView):
         
         # self.template_show_label = QLabel("Template show", self)
         # self.template_show_label.setGeometry(25,100,400,300)
-        template_pixmap = QPixmap("Data/Template/layout2.png")
+        template_pixmap = QPixmap("Data/Template/template1.png")
         scaled_template_pixmap = template_pixmap.scaled(400,300)
         self.template_show_label.setPixmap(scaled_template_pixmap)
         

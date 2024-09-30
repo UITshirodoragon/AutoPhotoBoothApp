@@ -8,7 +8,7 @@ class SwipeLabels(QWidget):
         self.current_index = 0
         self.start_pos = None
         self.total_width = 450  # Width of the visible area
-        self.swipe_speed_factor = 0.3  # Adjust this factor to slow down swipe speed
+        self.swipe_speed_factor = 0.005  # Adjust this factor to slow down swipe speed
 
         # List of colors for labels
         self.colors = [
