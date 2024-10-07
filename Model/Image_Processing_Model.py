@@ -1,4 +1,4 @@
-from __future__ import annotations
+
 
 # import sys
 # import os
@@ -9,7 +9,7 @@ from __future__ import annotations
 #     sys.path.append(package_model_path)
 
 import time
-from multiprocessing import Process, Queue
+from multiprocessing import Process, Queue, Pipe
 import platform as plf
 from typing import Protocol, Callable
 import cv2
@@ -19,13 +19,6 @@ from Model.Camera_Configuration_Model import CameraConfigurationModel
 
 
 # Protocol có tác dụng xác định và ràng buộc những method giao tiếp giữa các bên vơi nhau
-
-class ImageCapturePresenter(Protocol):
-    def handle_update_image(self) -> None:
-        ...
-    
-    def handle_update_fps(self) -> None:
-        ...
         
 
 class ImageProcessingModel:
@@ -33,9 +26,12 @@ class ImageProcessingModel:
         
         self.camera = CameraConfigurationModel()
         
+        
         self.preview_image_queue = Queue()
         self.preview_image_process = None
         self.preview_fps_queue = Queue()
+        self.capture_signal_queue = Queue()
+        
         
 
     
@@ -43,6 +39,7 @@ class ImageProcessingModel:
         self.preview_image_process = Process(target=self.preview_update_frame_process, 
                                              args=(self.preview_fps_queue, 
                                                    self.preview_image_queue, 
+                                                   self.capture_signal_queue,
                                                    self.camera)
                                              )
         self.preview_image_process.start()
@@ -51,6 +48,7 @@ class ImageProcessingModel:
     def preview_update_frame_process(self, 
                                      fps_queue: Queue, 
                                      frame_queue: Queue, 
+                                     capture_signal_queue: Queue,
                                      camera: CameraConfigurationModel
                                      ) -> None:
         camera.init_camera()
@@ -59,10 +57,13 @@ class ImageProcessingModel:
         while True:
             frame = camera.capture_frame()
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            frame = cv2.resize(frame, (450, 600))
+            frame = cv2.resize(frame, (400, 300))
             frame_queue.put(frame)
             self.calculate_preview_fps(fps_queue)
-        
+            if not capture_signal_queue.empty():
+                camera.capture_and_save_image(capture_signal_queue.get())
+            
+
     def get_frame(self) -> MatLike:
         if not self.preview_image_queue.empty():
             return self.preview_image_queue.get()

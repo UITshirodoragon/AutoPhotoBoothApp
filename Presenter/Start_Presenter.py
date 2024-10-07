@@ -4,20 +4,23 @@ from typing import Protocol
 from PyQt5.QtWidgets import QStackedWidget
 
 from Model.Start_Model import StartModel
+from Model.User_Model import *
 from View.Start_View import StartView
 
 # Presenter class
 class StartPresenter:
-    def __init__(self, model: StartModel, view: StartView, stack_view: QStackedWidget):
+    def __init__(self, model: StartModel, view: StartView, stack_view: QStackedWidget, user_control_model: UserModel):
         self.model = model
         self.view = view
         self.stack_view = stack_view
+        self.user_control_model = user_control_model
 
         
         self.view.SV_start_button_signal.connect(self.handle_start_button_clicked)
 
     def handle_start_button_clicked(self) -> None:
         self.stack_view.setCurrentIndex(1)
+        self.user_control_model.create_user()
 
 
 

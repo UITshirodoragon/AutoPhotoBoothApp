@@ -8,10 +8,10 @@ from PyQt5.QtGui import QIcon, QImage, QPixmap
 
 from View.Template_Menu_View import TemplateMenuView
 from Model.Template_Menu_Model import TemplateMenuModel
-
+from Model.User_Model import *
 
 class TemplateMenuPresenter:
-    def __init__(self, model: TemplateMenuModel, view: TemplateMenuView, stack_view: QStackedWidget) -> None:
+    def __init__(self, model: TemplateMenuModel, view: TemplateMenuView, stack_view: QStackedWidget, user_control_model: UserModel) -> None:
         self.model = model
         self.view = view
         self.stack_view = stack_view

@@ -12,6 +12,7 @@ from Model.Image_Processing_Model import ImageProcessingModel
 from Model.Start_Model import *
 from Model.Template_Menu_Model import TemplateMenuModel
 from Model.Template_Export_Model import TemplateExportModel
+from Model.User_Model import *
 
 from PyQt5.QtWidgets import QApplication, QStackedWidget
 import sys
@@ -23,21 +24,23 @@ if __name__ == "__main__":
     
     stack_view = QStackedWidget()
     
+    user_control_model = UserModel()
+    
     start_model = StartModel()
     start_view = StartView()
-    start_presenter = StartPresenter(start_model, start_view, stack_view)
+    start_presenter = StartPresenter(start_model, start_view, stack_view, user_control_model)
 
     template_menu_model = TemplateMenuModel()
     template_menu_view = TemplateMenuView()
-    template_menu_presenter = TemplateMenuPresenter(template_menu_model, template_menu_view, stack_view)
+    template_menu_presenter = TemplateMenuPresenter(template_menu_model, template_menu_view, stack_view, user_control_model)
     
     image_capture_view = ImageCaptureView()
     image_capture_model = ImageProcessingModel()
-    image_capture_presenter = ImageCapturePresenter(image_capture_model,image_capture_view, stack_view)
+    image_capture_presenter = ImageCapturePresenter(image_capture_model,image_capture_view, stack_view, user_control_model)
     
     template_export_model = TemplateExportModel()
     template_export_view = TemplateExportView()
-    template_export_presenter = TemplateExportPresenter(template_export_model, template_export_view, stack_view)
+    template_export_presenter = TemplateExportPresenter(template_export_model, template_export_view, stack_view, user_control_model)
     
     
     stack_view.addWidget(start_view)

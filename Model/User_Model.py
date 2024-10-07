@@ -23,7 +23,7 @@ class UserModel:
         self.user_id_count = 0
         self.user_count = 0
         self.user_list = []
-        self.base_image_gallery_path = "Data\ImageGallery"
+        self.base_image_gallery_path = "Data/ImageGallery"
         
         
         
@@ -72,7 +72,7 @@ class UserModel:
         else:
             pass
         
-    def get_user(self, index = -1):
+    def get_user(self, index = -1) -> User:
         return self.user_list[index]
     
     def create_user_image_gallery(self):
@@ -81,7 +81,7 @@ class UserModel:
         if os.path.exists(self.folder_name):
             shutil.rmtree(self.folder_name)
         os.makedirs(self.folder_name, exist_ok=True)  # Tạo thư mục
-        self.current_user.gallery_folder_path = self.folder_name
+        self.current_user.gallery_folder_path = self.folder_name.replace('\\','/')
         
     def delete_user_image_gallery(self, user):
         
