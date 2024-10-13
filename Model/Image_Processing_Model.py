@@ -26,12 +26,11 @@ class ImageProcessingModel:
         
         self.camera = CameraConfigurationModel()
         
-        
         self.preview_image_queue = Queue()
         self.preview_image_process = None
         self.preview_fps_queue = Queue()
         self.capture_signal_queue = Queue()
-        
+        self.image_captured_count = Queue()
         
 
     
@@ -40,6 +39,7 @@ class ImageProcessingModel:
                                              args=(self.preview_fps_queue, 
                                                    self.preview_image_queue, 
                                                    self.capture_signal_queue,
+                                                    self.image_captured_count,
                                                    self.camera)
                                              )
         self.preview_image_process.start()
@@ -49,7 +49,9 @@ class ImageProcessingModel:
                                      fps_queue: Queue, 
                                      frame_queue: Queue, 
                                      capture_signal_queue: Queue,
+                                     image_captured_count: Queue,
                                      camera: CameraConfigurationModel
+                                     
                                      ) -> None:
         camera.init_camera()
         self.preview_frame_count = 0
@@ -61,8 +63,9 @@ class ImageProcessingModel:
             frame_queue.put(frame)
             self.calculate_preview_fps(fps_queue)
             if not capture_signal_queue.empty():
+                if not image_captured_count.empty():
+                    camera.captured_and_saved_images_count = image_captured_count.get()
                 camera.capture_and_save_image(capture_signal_queue.get())
-            
 
     def get_frame(self) -> MatLike:
         if not self.preview_image_queue.empty():
@@ -87,4 +90,3 @@ class ImageProcessingModel:
         if self.preview_image_process is not None:
             self.preview_image_process.terminate()
             
-    

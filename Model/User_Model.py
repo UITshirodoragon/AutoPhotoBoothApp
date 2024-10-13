@@ -9,6 +9,7 @@ class User:
         self.email = None
         self.is_working = True
         self.gallery_folder_path = None
+        self.image_count = 0
         
     def delete(self):
         del self

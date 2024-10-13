@@ -24,4 +24,5 @@ class TemplateExportPresenter:
         self.stack_view.setCurrentIndex(0)
         self.user_control_model.delete_user()
         self.user_control_model.disable_user()
+        self.user_control_model.get_user().image_count = 0
         

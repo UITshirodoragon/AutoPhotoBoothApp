@@ -42,7 +42,9 @@ class ImageCapturePresenter:
     def handle_capture_button_clicked(self) -> None:
         print(self.user_control_model.get_user().gallery_folder_path)
         self.model.capture_signal_queue.put(obj = self.user_control_model.get_user().gallery_folder_path)
-    
+        self.model.image_captured_count.put(obj = self.user_control_model.get_user().image_count)
+        self.user_control_model.get_user().image_count += 1
+                
     def handle_update_preview_image(self) -> None:
         frame = self.model.get_frame()
         if frame is not None:       

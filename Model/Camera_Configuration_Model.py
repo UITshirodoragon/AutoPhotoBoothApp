@@ -136,7 +136,7 @@ class CameraConfigurationModel:
         except Exception as e:
             # thay the bang log sau
             print(f"Lỗi: {e}") 
-        self.captured_and_saved_images_count += 1
+        # self.captured_and_saved_images_count += 1
     
 
     def stop_camera(self) -> None:
