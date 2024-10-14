@@ -8,11 +8,12 @@ from Presenter.Start_Presenter import *
 from Presenter.Template_Menu_Presenter import TemplateMenuPresenter
 from Presenter.Template_Export_Presenter import TemplateExportPresenter
 
-from Model.Image_Processing_Model import ImageProcessingModel
+from Model.Image_Capture_Model import ImageCaptureModel
 from Model.Start_Model import *
 from Model.Template_Menu_Model import TemplateMenuModel
 from Model.Template_Export_Model import TemplateExportModel
 from Model.User_Model import *
+from Model.Template_Model import TemplateModel 
 
 from PyQt5.QtWidgets import QApplication, QStackedWidget
 import sys
@@ -25,6 +26,7 @@ if __name__ == "__main__":
     stack_view = QStackedWidget()
     
     user_control_model = UserModel()
+    template_control_model = TemplateModel()
     
     start_model = StartModel()
     start_view = StartView()
@@ -32,15 +34,15 @@ if __name__ == "__main__":
 
     template_menu_model = TemplateMenuModel()
     template_menu_view = TemplateMenuView()
-    template_menu_presenter = TemplateMenuPresenter(template_menu_model, template_menu_view, stack_view, user_control_model)
+    template_menu_presenter = TemplateMenuPresenter(template_menu_model, template_menu_view, stack_view, user_control_model, template_control_model)
     
+    image_capture_model = ImageCaptureModel()
     image_capture_view = ImageCaptureView()
-    image_capture_model = ImageProcessingModel()
-    image_capture_presenter = ImageCapturePresenter(image_capture_model,image_capture_view, stack_view, user_control_model)
+    image_capture_presenter = ImageCapturePresenter(image_capture_model,image_capture_view, stack_view, user_control_model, template_control_model)
     
     template_export_model = TemplateExportModel()
     template_export_view = TemplateExportView()
-    template_export_presenter = TemplateExportPresenter(template_export_model, template_export_view, stack_view, user_control_model)
+    template_export_presenter = TemplateExportPresenter(template_export_model, template_export_view, stack_view, user_control_model, template_control_model)
     
     
     stack_view.addWidget(start_view)

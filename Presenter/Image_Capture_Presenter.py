@@ -2,24 +2,26 @@ from __future__ import annotations
 from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QImage
 from PyQt5.QtWidgets import QStackedWidget
-from Model.Image_Processing_Model import ImageProcessingModel
+from Model.Image_Capture_Model import ImageCaptureModel
 from Model.User_Model import *
+from Model.Template_Model import TemplateModel
 from View.Image_Capture_View import ImageCaptureView
 from typing import Protocol
 from cv2.typing import MatLike
 
 
 class ImageCapturePresenter:
-    def __init__(self, model: ImageProcessingModel,
+    def __init__(self, model: ImageCaptureModel,
                  view: ImageCaptureView,
                  stack_view: QStackedWidget,
-                 user_control_model: UserModel
+                 user_control_model: UserModel,
+                template_control_model: TemplateModel
                  ) -> None:
         self.view = view
         self.model = model
         self.stack_view = stack_view
         self.user_control_model = user_control_model
-        
+        self.template_control_model = template_control_model
         # Khởi động camera trong model
         self.model.start_preview_process()
         
@@ -34,6 +36,11 @@ class ImageCapturePresenter:
         self.view.ICV_capture_button_signal.connect(self.handle_capture_button_clicked)
 
     def handle_back_button_clicked(self) -> None:
+        # when user change their mind
+        self.user_control_model.delete_user_image_gallery(self.user_control_model.get_user())
+        self.user_control_model.create_user_image_gallery()
+        self.user_control_model.get_user().image_count = 0
+        
         self.stack_view.setCurrentIndex(1)
         
     def handle_next_button_clicked(self) -> None:
@@ -43,6 +50,7 @@ class ImageCapturePresenter:
         print(self.user_control_model.get_user().gallery_folder_path)
         self.model.capture_signal_queue.put(obj = self.user_control_model.get_user().gallery_folder_path)
         self.model.image_captured_count.put(obj = self.user_control_model.get_user().image_count)
+        self.model.number_of_images.put(obj = self.template_control_model.get_template_from_database(self.template_control_model.selected_template_id)['number_of_images'])
         self.user_control_model.get_user().image_count += 1
                 
     def handle_update_preview_image(self) -> None:

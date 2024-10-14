@@ -6,19 +6,22 @@ from PyQt5.QtWidgets import QStackedWidget
 from View.Template_Export_View import TemplateExportView
 from Model.Template_Export_Model import TemplateExportModel
 from Model.User_Model import *
+from Model.Template_Model import TemplateModel
 
 class TemplateExportPresenter:
-    def __init__(self, model: TemplateExportModel, view: TemplateExportView, stack_view: QStackedWidget, user_control_model: UserModel ) -> None:
+    def __init__(self, model: TemplateExportModel, view: TemplateExportView, stack_view: QStackedWidget, user_control_model: UserModel, template_control_model: TemplateModel ) -> None:
         self.model = model
         self.view = view
         self.stack_view = stack_view
         self.user_control_model = user_control_model
+        self.template_control_model = template_control_model
         
         self.view.TEV_back_button_signal.connect(self.handle_back_button_clicked)
         self.view.TEV_restart_button_signal.connect(self.handle_restart_button_clicked)
         
     def handle_back_button_clicked(self) -> None:
         self.stack_view.setCurrentIndex(2)
+        print(self.template_control_model.selected_template_id)
         
     def handle_restart_button_clicked(self) -> None:
         self.stack_view.setCurrentIndex(0)
