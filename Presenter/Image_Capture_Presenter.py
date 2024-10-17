@@ -2,9 +2,13 @@ from __future__ import annotations
 from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QImage
 from PyQt5.QtWidgets import QStackedWidget
+
 from Model.Image_Capture_Model import ImageCaptureModel
-from Model.User_Model import *
+from Model.User_Model import UserModel, User
 from Model.Template_Model import TemplateModel
+
+from Presenter.Mediator import IMediator, ConcreteMediator
+
 from View.Image_Capture_View import ImageCaptureView
 from typing import Protocol
 from cv2.typing import MatLike
@@ -22,6 +26,9 @@ class ImageCapturePresenter:
         self.stack_view = stack_view
         self.user_control_model = user_control_model
         self.template_control_model = template_control_model
+        self.mediator = None
+        
+        
         # Khởi động camera trong model
         self.model.start_preview_process()
         
@@ -35,6 +42,10 @@ class ImageCapturePresenter:
         self.view.ICV_next_button_signal.connect(self.handle_next_button_clicked)
         self.view.ICV_capture_button_signal.connect(self.handle_capture_button_clicked)
 
+    def set_mediator(self, mediator: IMediator) -> None:
+        self.mediator = mediator
+
+
     def handle_back_button_clicked(self) -> None:
         # when user change their mind
         self.user_control_model.delete_user_image_gallery(self.user_control_model.get_user())
@@ -44,14 +55,22 @@ class ImageCapturePresenter:
         self.stack_view.setCurrentIndex(1)
         
     def handle_next_button_clicked(self) -> None:
-        self.stack_view.setCurrentIndex(3) 
-    
+        # self.stack_view.setCurrentIndex(3) 
+        # if self.user_control_model.get_user().image_count == self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id, 'number_of_images'):
+        #     self.mediator.notify(sender = 'image_capture_presenter', receiver = 'template_menu_presenter', event = 'update_final_template_with_images')
+        #     self.stack_view.setCurrentIndex(3)
+        pass
+        
     def handle_capture_button_clicked(self) -> None:
         print(self.user_control_model.get_user().gallery_folder_path)
-        self.model.capture_signal_queue.put(obj = self.user_control_model.get_user().gallery_folder_path)
-        self.model.image_captured_count.put(obj = self.user_control_model.get_user().image_count)
-        self.model.number_of_images.put(obj = self.template_control_model.get_template_from_database(self.template_control_model.selected_template_id)['number_of_images'])
-        self.user_control_model.get_user().image_count += 1
+        if self.user_control_model.get_user().image_count < self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id,'number_of_images'):
+            self.model.capture_signal_queue.put(obj = self.user_control_model.get_user().gallery_folder_path)
+            self.model.image_captured_count.put(obj = self.user_control_model.get_user().image_count)
+            self.model.number_of_images.put(obj = self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id, 'number_of_images'))
+            self.user_control_model.get_user().image_count += 1
+        if self.user_control_model.get_user().image_count == self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id, 'number_of_images'):
+            self.mediator.notify(sender = 'image_capture_presenter', receiver = 'template_menu_presenter', event = 'update_final_template_with_images')
+            self.stack_view.setCurrentIndex(3)
                 
     def handle_update_preview_image(self) -> None:
         frame = self.model.get_frame()

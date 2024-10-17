@@ -58,3 +58,8 @@ class TemplateExportView(QWidget, Ui_TemplateExportView):
         
     def emit_restart_button_clicked_signal(self) -> None:
         self.TEV_restart_button_signal.emit()
+        
+    def update_final_template_with_images_gui(self, user_final_template_path) -> None:
+        template_pixmap = QPixmap(user_final_template_path)
+        scaled_template_pixmap = template_pixmap.scaled(400,300)
+        self.template_show_label.setPixmap(scaled_template_pixmap)

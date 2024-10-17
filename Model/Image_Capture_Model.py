@@ -16,8 +16,10 @@ import cv2
 from cv2.typing import MatLike
 from Model.Camera_Configuration_Model import CameraConfigurationModel
 from Model.Template_Model import TemplateModel
-
-
+from Model.User_Model import User
+from PIL import Image
+import ast
+import json
 # Protocol có tác dụng xác định và ràng buộc những method giao tiếp giữa các bên vơi nhau
         
 
@@ -106,3 +108,13 @@ class ImageCaptureModel:
         if self.preview_image_process is not None:
             self.preview_image_process.terminate()
     
+    def export_template_with_images(self, template: dict, user: User ) -> None:
+        img_index = 0
+        background = Image.open(template['path'])
+        img_pos_list = json.loads(template['image_positions_list'])
+        for pos in img_pos_list:
+                img = Image.open(user.gallery_folder_path + f"/image{img_index}.png").resize(tuple(json.loads(template['image_size'])))
+                background.paste(img, tuple(pos))
+                img_index += 1
+
+        background.save(user.gallery_folder_path +'/final.png')

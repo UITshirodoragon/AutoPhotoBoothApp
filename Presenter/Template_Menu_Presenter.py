@@ -7,8 +7,13 @@ from PyQt5.QtCore import pyqtSignal, Qt
 from PyQt5.QtGui import QIcon, QImage, QPixmap
 
 from View.Template_Menu_View import TemplateMenuView
+
+from Presenter.Mediator import IMediator, ConcreteMediator
+
+
+
 from Model.Template_Menu_Model import TemplateMenuModel
-from Model.User_Model import *
+from Model.User_Model import UserModel, User
 from Model.Template_Model import TemplateModel
 
 class TemplateMenuPresenter:
@@ -22,6 +27,7 @@ class TemplateMenuPresenter:
         self.view = view
         self.stack_view = stack_view
         self.template_control_model = template_control_model
+        self.mediator = None
         
         self.current_index = 1
         self.small_template_labels = []
@@ -33,6 +39,9 @@ class TemplateMenuPresenter:
         
         self.handle_template_menu_label()
         self.view.TMV_touch_event_signal.connect(self.handle_update_small_template_labels_in_menu)
+        
+    def set_mediator(self, mediator: IMediator) -> None:
+        self.mediator = mediator    
         
     def handle_back_button_clicked(self) -> None:
         self.stack_view.setCurrentIndex(0)
@@ -50,7 +59,7 @@ class TemplateMenuPresenter:
             for j in range(1,5):
                 if self.current_index <= self.template_control_model.count_templates_from_database():
                     small_template_label = QLabel()
-                    template_pixmap = QPixmap(self.template_control_model.get_template_from_database(self.current_index)['path'])
+                    template_pixmap = QPixmap(self.template_control_model.get_template_with_field_from_database(self.current_index, 'path'))
                     small_template_label.setPixmap(template_pixmap.scaled(100, 100, Qt.KeepAspectRatio))  # Kích thước nhỏ hơn
                     small_template_label.mousePressEvent = self.handle_mouse_press_event_small_template_label_in_menu()  # Thiết lập sự kiện click
                     small_template_label.mouseReleaseEvent = self.handle_mouse_release_event_small_template_label_in_menu(self.current_index)
@@ -79,7 +88,7 @@ class TemplateMenuPresenter:
             if delta_x is None:
                 pass 
             elif delta_x > -50 and delta_x < 50: 
-                self.view.update_template_show_label(self.template_control_model.get_template_from_database(index)['path'])  # Kích thước lớn hơn
+                self.view.update_template_show_label(self.template_control_model.get_template_with_field_from_database(index, 'path'))  # Kích thước lớn hơn
                 self.selected_template_id = index
             elif delta_x >= 50:
                 self.view.TMV_touch_event_signal.emit("swipe right")

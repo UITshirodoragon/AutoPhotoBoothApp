@@ -80,6 +80,41 @@ class TemplateModel:
         
         return dict(template)
 
+    def get_template_with_field_from_database(self, id, field = None):
+        conn = sqlite3.connect(self.database_path)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+        SELECT * FROM templates WHERE id = ?
+        ''', (id,))
+        
+        template = cursor.fetchone()
+        conn.close()
+        
+        if(template == None):
+            print("Template not found")
+        
+        if field is None:
+            return dict(template)
+        elif field == 'path':
+            return template['path']
+        elif field == 'style':
+            return template['style']
+        elif field == 'number_of_images':  
+            return template['number_of_images']
+        elif field == 'image_positions_list':
+            return json.loads(template['image_positions_list'])
+        elif field == 'size':
+            return json.loads(template['size'])
+        elif field == 'image_size':
+            return json.loads(template['image_size'])
+        else:
+            print("Field not found")
+            return None
+
+
+
     def delete_template_from_database(self, id) -> None:
         conn = sqlite3.connect(self.database_path)
         cursor = conn.cursor()
@@ -187,18 +222,18 @@ class TemplateModel:
         return self.selected_template_id
 
 if __name__ == "__main__":
-    # template_model = TemplateModel()
+    template_model = TemplateModel()
     
-    # template_model.create_table_in_database()
+    # # template_model.create_table_in_database()
     
-    # template_model.insert_template_to_database('Data/Template/template1.png', 
-    #                                            'normal_2grids', 
-    #                                            2, 
-    #                                            [(52,68), (780, 508)], 
-    #                                            (1500, 1100), 
-    #                                            (676, 507)
-    #                                            )
+    # # template_model.insert_template_to_database('Data/Template/template1.png', 
+    # #                                            'normal_2grids', 
+    # #                                            2, 
+    # #                                            [(52,68), (780, 508)], 
+    # #                                            (1500, 1100), 
+    # #                                            (676, 507)
+    # #                                            )
         
-    # templates = template_model.get_all_templates_from_database()
-    # print(templates["style"])
+    # template = template_model.get_template_from_database(1)
+    # print(type())
     pass
