@@ -56,10 +56,11 @@ class ImageCapturePresenter:
         
     def handle_next_button_clicked(self) -> None:
         # self.stack_view.setCurrentIndex(3) 
-        # if self.user_control_model.get_user().image_count == self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id, 'number_of_images'):
-        #     self.mediator.notify(sender = 'image_capture_presenter', receiver = 'template_menu_presenter', event = 'update_final_template_with_images')
-        #     self.stack_view.setCurrentIndex(3)
+        if self.user_control_model.get_user().image_count == self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id, 'number_of_images'):
+            self.mediator.notify(sender = 'image_capture_presenter', receiver = 'template_menu_presenter', event = 'update_final_template_with_images')
+        self.stack_view.setCurrentIndex(3)
         pass
+
         
     def handle_capture_button_clicked(self) -> None:
         print(self.user_control_model.get_user().gallery_folder_path)
@@ -68,9 +69,9 @@ class ImageCapturePresenter:
             self.model.image_captured_count.put(obj = self.user_control_model.get_user().image_count)
             self.model.number_of_images.put(obj = self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id, 'number_of_images'))
             self.user_control_model.get_user().image_count += 1
-        if self.user_control_model.get_user().image_count == self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id, 'number_of_images'):
-            self.mediator.notify(sender = 'image_capture_presenter', receiver = 'template_menu_presenter', event = 'update_final_template_with_images')
-            self.stack_view.setCurrentIndex(3)
+            # if self.user_control_model.get_user().image_count == self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id, 'number_of_images'):
+            #     self.mediator.notify(sender = 'image_capture_presenter', receiver = 'template_menu_presenter', event = 'update_final_template_with_images')
+            #     self.stack_view.setCurrentIndex(3)
                 
     def handle_update_preview_image(self) -> None:
         frame = self.model.get_frame()

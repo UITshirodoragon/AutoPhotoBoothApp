@@ -108,13 +108,3 @@ class ImageCaptureModel:
         if self.preview_image_process is not None:
             self.preview_image_process.terminate()
     
-    def export_template_with_images(self, template: dict, user: User ) -> None:
-        img_index = 0
-        background = Image.open(template['path'])
-        img_pos_list = json.loads(template['image_positions_list'])
-        for pos in img_pos_list:
-                img = Image.open(user.gallery_folder_path + f"/image{img_index}.png").resize(tuple(json.loads(template['image_size'])))
-                background.paste(img, tuple(pos))
-                img_index += 1
-
-        background.save(user.gallery_folder_path +'/final.png')

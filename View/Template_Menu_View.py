@@ -26,7 +26,7 @@ class TemplateMenuView(QWidget, Ui_TemplateMenuView):
         
 
         template_pixmap = QPixmap("Data/Template/template1.png")
-        scaled_template_pixmap = template_pixmap.scaled(400,300, Qt.KeepAspectRatio)
+        scaled_template_pixmap = template_pixmap.scaled(1030,1030, Qt.KeepAspectRatio)
         self.template_show_label.setPixmap(scaled_template_pixmap)
         
         self.back_button.clicked.connect(self.emit_back_button_clicked_signal)
@@ -55,7 +55,7 @@ class TemplateMenuView(QWidget, Ui_TemplateMenuView):
     
     def update_template_show_label(self, template_path):
         pixmap = QPixmap(template_path)
-        self.template_show_label.setPixmap(pixmap.scaled(400, 400, Qt.KeepAspectRatio))  # Kích thước lớn hơn
+        self.template_show_label.setPixmap(pixmap.scaled(1030, 1030, Qt.KeepAspectRatio))  # Kích thước lớn hơn
 
     
     #slot

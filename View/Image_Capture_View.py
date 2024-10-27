@@ -40,7 +40,7 @@ class ImageCaptureView(QWidget, Ui_Image_Capture_View ):
         bytes_per_line = ch * w
         image = QImage(frame.data, w, h, bytes_per_line, QImage.Format_RGB888)
         # self.preview_reigion.setPixmap(QPixmap.fromImage(image))
-        self.preview_image_label.setPixmap(QPixmap.fromImage(image).scaled(400,300, Qt.KeepAspectRatio))
+        self.preview_image_label.setPixmap(QPixmap.fromImage(image).scaled(1080,1440, Qt.KeepAspectRatio))
 
 
     def update_preview_fps_gui(self, fps: float) -> None:

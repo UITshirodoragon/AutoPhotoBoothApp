@@ -13,6 +13,7 @@ class TemplateExportModel:
         background = Image.open(template['path'])
         img_pos_list = json.loads(template['image_positions_list'])     # type list of list
         for pos in img_pos_list:
+                print(user.gallery_folder_path + f"/image{img_index}.png")
                 img = Image.open(user.gallery_folder_path + f"/image{img_index}.png").resize(tuple(json.loads(template['image_size'])))
                 background.paste(img, tuple(pos))   # change list to tuple
                 img_index += 1

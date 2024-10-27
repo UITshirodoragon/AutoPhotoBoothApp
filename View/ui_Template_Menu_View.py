@@ -19,27 +19,26 @@ from PyQt5.QtWidgets import (QApplication, QGroupBox, QLabel, QPushButton,
     QSizePolicy, QStackedWidget, QWidget)
 import View.UI_ViewResource_rc
 
-
 class Ui_TemplateMenuView(object):
     def setupUi(self, TemplateMenuView):
         if not TemplateMenuView.objectName():
             TemplateMenuView.setObjectName(u"TemplateMenuView")
-        TemplateMenuView.resize(450, 800)
-        TemplateMenuView.setMaximumSize(QSize(450, 800))
-        TemplateMenuView.setBaseSize(QSize(450, 800))
+        TemplateMenuView.resize(1080, 1920)
+        TemplateMenuView.setMaximumSize(QSize(1080, 1920))
+        TemplateMenuView.setBaseSize(QSize(1080, 1920))
         self.back_button = QPushButton(TemplateMenuView)
         self.back_button.setObjectName(u"back_button")
-        self.back_button.setGeometry(QRect(25, 25, 50, 50))
+        self.back_button.setGeometry(QRect(25, 25, 100, 100))
         icon = QIcon()
         icon.addFile(u":/View/Icon/left_arrow.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.back_button.setIcon(icon)
-        self.back_button.setIconSize(QSize(50, 50))
+        self.back_button.setIconSize(QSize(100, 100))
         self.confirm_button = QPushButton(TemplateMenuView)
         self.confirm_button.setObjectName(u"confirm_button")
-        self.confirm_button.setGeometry(QRect(175, 525, 100, 50))
+        self.confirm_button.setGeometry(QRect(440, 1520, 200, 100))
         self.template_show_label = QLabel(TemplateMenuView)
         self.template_show_label.setObjectName(u"template_show_label")
-        self.template_show_label.setGeometry(QRect(25, 100, 400, 400))
+        self.template_show_label.setGeometry(QRect(25, 150, 1030, 1030))
         font = QFont()
         font.setPointSize(20)
         font.setBold(False)
@@ -48,12 +47,21 @@ class Ui_TemplateMenuView(object):
         self.template_show_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.template_menu_box = QGroupBox(TemplateMenuView)
         self.template_menu_box.setObjectName(u"template_menu_box")
-        self.template_menu_box.setGeometry(QRect(5, 600, 440, 150))
+        self.template_menu_box.setGeometry(QRect(15, 1200, 1050, 300))
         self.template_widget_stack = QStackedWidget(self.template_menu_box)
         self.template_widget_stack.setObjectName(u"template_widget_stack")
-        self.template_widget_stack.setGeometry(QRect(5, 15, 430, 120))
-        
+        self.template_widget_stack.setGeometry(QRect(10, 25, 1030, 250))
+        self.page = QWidget()
+        self.page.setObjectName(u"page")
+        self.template_widget_stack.addWidget(self.page)
+        self.page_2 = QWidget()
+        self.page_2.setObjectName(u"page_2")
+        self.template_widget_stack.addWidget(self.page_2)
+
         self.retranslateUi(TemplateMenuView)
+
+        self.template_widget_stack.setCurrentIndex(0)
+
 
         QMetaObject.connectSlotsByName(TemplateMenuView)
     # setupUi

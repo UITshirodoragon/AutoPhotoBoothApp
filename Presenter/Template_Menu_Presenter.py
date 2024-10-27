@@ -60,7 +60,7 @@ class TemplateMenuPresenter:
                 if self.current_index <= self.template_control_model.count_templates_from_database():
                     small_template_label = QLabel()
                     template_pixmap = QPixmap(self.template_control_model.get_template_with_field_from_database(self.current_index, 'path'))
-                    small_template_label.setPixmap(template_pixmap.scaled(100, 100, Qt.KeepAspectRatio))  # Kích thước nhỏ hơn
+                    small_template_label.setPixmap(template_pixmap.scaled(200, 200, Qt.KeepAspectRatio))  # Kích thước nhỏ hơn
                     small_template_label.mousePressEvent = self.handle_mouse_press_event_small_template_label_in_menu()  # Thiết lập sự kiện click
                     small_template_label.mouseReleaseEvent = self.handle_mouse_release_event_small_template_label_in_menu(self.current_index)
                     widget_layout.addWidget(small_template_label)

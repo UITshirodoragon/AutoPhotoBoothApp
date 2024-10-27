@@ -20,6 +20,7 @@ from Model.Template_Model import TemplateModel
 from PyQt5.QtWidgets import QApplication, QStackedWidget
 import sys
 
+import platform as plf
 
 if __name__ == "__main__":
 
@@ -58,22 +59,24 @@ if __name__ == "__main__":
     stack_view.setCurrentIndex(0)
     
     stack_view.show()
-
     
+    # Lấy danh sách các màn hình
+    screens = app.screens()
+
+    # Giả sử màn hình phụ là màn hình thứ hai (index 1)
+    if(plf.system() == "Windows"):
+        if len(screens) > 1:
+            secondary_screen = screens[1]
+            
+            # Đặt cửa sổ vào màn hình phụ
+            stack_view.move(secondary_screen.geometry().topLeft())
+            
+            # Chuyển sang chế độ toàn màn hình
+            stack_view.showFullScreen()
+        else:
+            print("Không tìm thấy màn hình phụ.")
+            stack_view.show()
     
-    # # Tạo view và presenter
-    # view = ImageCaptureView()
-    # model = ImageProcessingModel()
-    # presenter = ImageCapturePresenter(view, model)
 
-    # # Hiển thị giao diện
-    # view.show()
-
-    # Xử lý khi đóng cửa sổ
-    # def close_app():
-    #     presenter.handle_stop_update_image()
-    #     app.quit()
-
-    # view.closeEvent = lambda event: close_app()
 
     sys.exit(app.exec_())
