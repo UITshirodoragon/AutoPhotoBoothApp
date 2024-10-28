@@ -40,7 +40,7 @@ if __name__ == "__main__":
     image_capture_view = ImageCaptureView()
     template_export_view = TemplateExportView()   
      
-    start_presenter = StartPresenter(start_model, start_view, stack_view, user_control_model)
+    start_presenter = StartPresenter(start_model, start_view, stack_view, user_control_model, app)
 
     template_menu_presenter = TemplateMenuPresenter(template_menu_model, template_menu_view, stack_view, user_control_model, template_control_model)
     
