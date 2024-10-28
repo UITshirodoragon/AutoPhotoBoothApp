@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QPushButton, QLabel
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QPushButton, QLabel, QFrame
 from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QMouseEvent
 
@@ -6,9 +6,11 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Mouse Interaction Example")
-        self.setGeometry(100, 100, 400, 500)
+        self.setGeometry(100, 100, 500, 800)
         
-        self.container = QWidget(self)
+        self.frame = QFrame(self)
+        self.frame.setGeometry(50, 0, 400, 100)
+        self.container = QWidget(self.frame)
         self.container.setGeometry(0, 0, 1000, 100)
         self.container.setStyleSheet("background-color: white; border: 1px solid black;")
         
@@ -35,7 +37,7 @@ class MainWindow(QMainWindow):
         
         # Add widget to display the color of the touched widget
         self.info_widget = QWidget(self)
-        self.info_widget.setGeometry(0, 100, 400, 400)
+        self.info_widget.setGeometry(50, 100, 400, 400)
         self.info_widget.setStyleSheet("background-color: lightyellow; border: 1px solid black;")
         
     def mousePressEvent(self, event):

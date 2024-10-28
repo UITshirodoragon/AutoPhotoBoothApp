@@ -98,7 +98,7 @@
    <property name="title">
     <string>TEMPLATE MENU</string>
    </property>
-   <widget class="QStackedWidget" name="template_widget_stack">
+   <widget class="QFrame" name="template_menu_frame">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -107,11 +107,12 @@
       <height>250</height>
      </rect>
     </property>
-    <property name="currentIndex">
-     <number>0</number>
+    <property name="frameShape">
+     <enum>QFrame::Shape::StyledPanel</enum>
     </property>
-    <widget class="QWidget" name="page"/>
-    <widget class="QWidget" name="page_2"/>
+    <property name="frameShadow">
+     <enum>QFrame::Shadow::Raised</enum>
+    </property>
    </widget>
   </widget>
  </widget>

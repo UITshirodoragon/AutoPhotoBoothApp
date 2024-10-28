@@ -17,7 +17,7 @@ from Model.Template_Export_Model import TemplateExportModel
 from Model.User_Model import UserModel, User
 from Model.Template_Model import TemplateModel 
 
-from PyQt5.QtWidgets import QApplication, QStackedWidget
+from PyQt5.QtWidgets import QApplication, QStackedWidget, QScrollArea, QMainWindow
 import sys
 
 import platform as plf
@@ -75,7 +75,14 @@ if __name__ == "__main__":
             stack_view.showFullScreen()
         else:
             print("Không tìm thấy màn hình phụ.")
-            stack_view.show()
+            
+            # scroll_area = QScrollArea()
+            # scroll_area.setWidget(stack_view)
+            # scroll_area.setWidgetResizable(True)
+            # main_window = QMainWindow()
+            # main_window.setCentralWidget(scroll_area)
+            
+            # main_window.showFullScreen()
     
 
 

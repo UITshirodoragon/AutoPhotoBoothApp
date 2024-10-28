@@ -33,12 +33,16 @@ class TemplateMenuPresenter:
         self.small_template_labels = []
         self.start_pos = None
         self.selected_template_id = 1
+        self.touch_event: str = "Touch"
+
+        
+        self.number_of_templates = self.template_control_model.count_templates_from_database()
         
         self.view.TMV_back_button_signal.connect(self.handle_back_button_clicked)
         self.view.TMV_confirm_button_signal.connect(self.handle_confirm_button_clicked)
         
         self.handle_template_menu_label()
-        self.view.TMV_touch_event_signal.connect(self.handle_update_small_template_labels_in_menu)
+        # self.view.TMV_touch_event_signal.connect(self.handle_update_small_template_labels_in_menu)
         
     def set_mediator(self, mediator: IMediator) -> None:
         self.mediator = mediator    
@@ -52,54 +56,89 @@ class TemplateMenuPresenter:
         # confirm final
         self.template_control_model.selected_template_id = self.selected_template_id
         
-    def handle_template_menu_label(self):
-        for i in range(self.template_control_model.count_templates_from_database() // 4 + 1):
-            widget = QWidget()
-            widget_layout = QHBoxLayout()
-            for j in range(1,5):
-                if self.current_index <= self.template_control_model.count_templates_from_database():
-                    small_template_label = QLabel()
-                    template_pixmap = QPixmap(self.template_control_model.get_template_with_field_from_database(self.current_index, 'path'))
-                    small_template_label.setPixmap(template_pixmap.scaled(200, 200, Qt.KeepAspectRatio))  # Kích thước nhỏ hơn
-                    small_template_label.mousePressEvent = self.handle_mouse_press_event_small_template_label_in_menu()  # Thiết lập sự kiện click
-                    small_template_label.mouseReleaseEvent = self.handle_mouse_release_event_small_template_label_in_menu(self.current_index)
-                    widget_layout.addWidget(small_template_label)
-                    self.small_template_labels.append(small_template_label)
-                    self.current_index += 1
-            widget.setLayout(widget_layout)
-            self.view.template_widget_stack.addWidget(widget)
 
+    def handle_template_menu_label(self):
+        self.view.template_menu_container_widget.setGeometry(0, 0, self.number_of_templates * 250, 250)
+        # self.view.template_menu_frame.mousePressEvent = self.handle_mouse_press_event_small_template_label_in_menu_frame()
+        self.view.template_menu_frame.mouseMoveEvent = self.handle_mouse_move_event_small_template_label_in_menu_frame()
+        # self.view.template_menu_frame.mouseReleaseEvent = self.handle_mouse_release_event_small_template_label_in_menu_frame()   
+        container_layout = QHBoxLayout()
+        for i in range(1, self.number_of_templates + 1):
+            small_template_label = QLabel()
+            small_template_label.setMinimumSize(200, 200)
+            small_template_label.setMaximumSize(250, 250)
+            template_pixmap = QPixmap(self.template_control_model.get_template_with_field_from_database(i, 'path'))
+            small_template_label.setPixmap(template_pixmap.scaled(200, 200, Qt.KeepAspectRatio))
+            small_template_label.mousePressEvent = self.handle_mouse_press_event_small_template_label_in_menu()  # Thiết lập sự kiện click
+            small_template_label.mouseReleaseEvent = self.handle_mouse_release_event_small_template_label_in_menu(self.current_index)
+            # small_template_label.mouseMoveEvent = self.handle_mouse_move_event_small_template_label_in_menu()
+            container_layout.addWidget(small_template_label)
+            self.small_template_labels.append(small_template_label)
+            self.current_index += 1
+        self.view.template_menu_container_widget.setLayout(container_layout)
+        
+        
+        
     
-    # overide mouse event method for small template in menu
+    # overide mouse event method for small template in menu for template menu frame
+    def handle_mouse_press_event_small_template_label_in_menu_frame(self):
+        def handler(event):
+            pass
+        return handler
+    
+    def handle_mouse_move_event_small_template_label_in_menu_frame(self):
+        def handler(event):
+            if self.start_pos:
+                delta = event.pos() - self.start_pos
+                new_x = self.view.template_menu_container_widget.x() + delta.x()
+                new_x = max(min(new_x, 0), (self.number_of_templates*250)-1530)  # Ensure new_x is between -600 and 0
+                self.view.template_menu_container_widget.move(new_x, self.view.template_menu_container_widget.y())
+                self.start_pos = event.pos()  
+                if delta.x() > 0:
+                    self.touch_event = "Swipe right"
+                elif delta.x() < 0:
+                    self.touch_event = "Swipe left"
+            
+        return handler
+    
+    def handle_mouse_release_event_small_template_label_in_menu_frame(self):
+        def handler(event):
+            pass
+        return handler
+    
+    
+    # overide mouse event method for small template in menu for template menu label
     def handle_mouse_press_event_small_template_label_in_menu(self):
         def handler(event):
-            self.start_pos = event.pos()
+            if event.button() == Qt.LeftButton:
+                self.start_pos = event.pos()
+            
         return handler
+    
+    def handle_mouse_move_event_small_template_label_in_menu(self):
+        def handler(event):
+            pass
+        return handler
+    
     
     def handle_mouse_release_event_small_template_label_in_menu(self, index):
         
         def handler(event):
-            delta_x = None
-            if self.start_pos:
-                end_pos = event.pos()
-                delta_x = end_pos.x() - self.start_pos.x()
-            
-            
-            if delta_x is None:
-                pass 
-            elif delta_x > -50 and delta_x < 50: 
-                self.view.update_template_show_label(self.template_control_model.get_template_with_field_from_database(index, 'path'))  # Kích thước lớn hơn
-                self.selected_template_id = index
-            elif delta_x >= 50:
-                self.view.TMV_touch_event_signal.emit("swipe right")
-            elif delta_x <= -50:
-                self.view.TMV_touch_event_signal.emit("swipe left")
-            self.start_pos = None
+            if event.button() == Qt.LeftButton:
+                if self.touch_event == "Touch":
+                    
+                    for label in self.small_template_labels:
+                        if label.geometry().contains(self.view.template_menu_container_widget.mapFromParent(event.pos())):
+                            self.view.update_template_show_label(self.template_control_model.get_template_with_field_from_database(index, 'path'))  # Kích thước lớn hơn
+                            self.selected_template_id = index
+                            break
+                    # self.view.TMV_touch_event_signal.emit("Touch")
+                elif self.touch_event == "Swipe right":
+                    pass
+                    # self.view.TMV_touch_event_signal.emit("Swipe right")
+                elif self.touch_event == "Swipe left":
+                    pass
+                    # self.view.TMV_touch_event_signal.emit("Swipe left")
+                print(self.touch_event)
+            self.touch_event = "Touch"
         return handler
-    
-    def handle_update_small_template_labels_in_menu(self, touch_event):
-        """Update the visible labels based on the swipe direction"""
-        if touch_event == 'swipe left' and self.view.template_widget_stack.currentIndex() > 0:
-            self.view.template_widget_stack.setCurrentIndex(self.view.template_widget_stack.currentIndex() - 1)
-        elif touch_event == 'swipe right' and self.view.template_widget_stack.currentIndex() < self.view.template_widget_stack.count() - 1:
-            self.view.template_widget_stack.setCurrentIndex(self.view.template_widget_stack.currentIndex() + 1)

@@ -16,7 +16,7 @@ from PyQt5.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PyQt5.QtWidgets import (QApplication, QGroupBox, QLabel, QPushButton,
-    QSizePolicy, QStackedWidget, QWidget)
+    QSizePolicy, QStackedWidget, QWidget, QFrame)
 import View.UI_ViewResource_rc
 
 class Ui_TemplateMenuView(object):
@@ -48,20 +48,13 @@ class Ui_TemplateMenuView(object):
         self.template_menu_box = QGroupBox(TemplateMenuView)
         self.template_menu_box.setObjectName(u"template_menu_box")
         self.template_menu_box.setGeometry(QRect(15, 1200, 1050, 300))
-        self.template_widget_stack = QStackedWidget(self.template_menu_box)
-        self.template_widget_stack.setObjectName(u"template_widget_stack")
-        self.template_widget_stack.setGeometry(QRect(10, 25, 1030, 250))
-        self.page = QWidget()
-        self.page.setObjectName(u"page")
-        self.template_widget_stack.addWidget(self.page)
-        self.page_2 = QWidget()
-        self.page_2.setObjectName(u"page_2")
-        self.template_widget_stack.addWidget(self.page_2)
+        self.template_menu_frame = QFrame(self.template_menu_box)
+        self.template_menu_frame.setObjectName(u"template_menu_frame")
+        self.template_menu_frame.setGeometry(QRect(10, 25, 1030, 250))
+        self.template_menu_frame.setFrameShape(QFrame.Shape.StyledPanel)
+        self.template_menu_frame.setFrameShadow(QFrame.Shadow.Raised)
 
         self.retranslateUi(TemplateMenuView)
-
-        self.template_widget_stack.setCurrentIndex(0)
-
 
         QMetaObject.connectSlotsByName(TemplateMenuView)
     # setupUi
@@ -73,6 +66,5 @@ class Ui_TemplateMenuView(object):
         self.template_show_label.setText(QCoreApplication.translate("TemplateMenuView", u"SELECT YOUR TEMPLATE", None))
         self.template_menu_box.setTitle(QCoreApplication.translate("TemplateMenuView", u"TEMPLATE MENU", None))
     # retranslateUi
-
 
 

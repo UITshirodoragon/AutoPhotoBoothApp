@@ -6,10 +6,15 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Mouse Move Example")
-        self.setGeometry(100, 100, 400, 100)
+        self.setGeometry(100, 100, 600, 100)
         
-        self.container = QWidget(self)
+        self.frame = QWidget(self)
+        self.frame.setGeometry(100, 0, 400, 100)
+        self.container = QWidget(self.frame)
         self.container.setGeometry(0, 0, 1000, 100)
+        self.container.mousePressEvent = self.handleMousePressEvent
+        self.container.mouseMoveEvent = self.handleMouseMoveEvent   
+        self.container.mouseReleaseEvent = self.handleMmouseReleaseEvent
         self.container.setStyleSheet("background-color: white; border: 1px solid black;")
         
         colors = ["lightblue", "lightgreen", "lightcoral", "lightgoldenrodyellow", "lightpink", 
@@ -33,21 +38,25 @@ class MainWindow(QMainWindow):
         self.right_button.setGeometry(70, 70, 50, 30)
         self.right_button.clicked.connect(self.move_right)
         
-    def mousePressEvent(self, event):
+    def handleMousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
             self.startPos = event.pos()
+            event.accept()
     
-    def mouseMoveEvent(self, event):
+    def handleMouseMoveEvent(self, event):
         if self.startPos:
+            print(event.pos())
             delta = event.pos() - self.startPos
             new_x = self.container.x() + delta.x()
             new_x = max(min(new_x, 0), -600)  # Ensure new_x is between -600 and 0
             self.container.move(new_x, self.container.y())
             self.startPos = event.pos()
+            event.accept()
     
-    def mouseReleaseEvent(self, event):
+    def handleMmouseReleaseEvent(self, event):
         if event.button() == Qt.LeftButton:
             self.startPos = None
+            event.accept()
     
     def move_left(self):
         new_x = self.container.x() - 10
