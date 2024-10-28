@@ -16,7 +16,7 @@ from PyQt5.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PyQt5.QtWidgets import (QApplication, QLabel, QPushButton, QSizePolicy,
-    QWidget)
+    QWidget, QFrame)
 import View.UI_ViewResource_rc
 
 class Ui_Image_Capture_View(object):
@@ -33,11 +33,11 @@ class Ui_Image_Capture_View(object):
         self.next_button.setIconSize(QSize(100, 100))
         self.preview_fps_label = QLabel(Image_Capture_View)
         self.preview_fps_label.setObjectName(u"preview_fps_label")
-        self.preview_fps_label.setGeometry(QRect(25, 1600, 50, 50))
+        self.preview_fps_label.setGeometry(QRect(30, 1650, 50, 50))
         self.preview_fps_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.capture_button = QPushButton(Image_Capture_View)
         self.capture_button.setObjectName(u"capture_button")
-        self.capture_button.setGeometry(QRect(490, 1600, 100, 100))
+        self.capture_button.setGeometry(QRect(490, 1595, 100, 100))
         icon1 = QIcon()
         icon1.addFile(u":/View/Icon/Capture_button.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.capture_button.setIcon(icon1)
@@ -54,6 +54,15 @@ class Ui_Image_Capture_View(object):
         icon2.addFile(u":/View/Icon/left_arrow.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.back_button.setIcon(icon2)
         self.back_button.setIconSize(QSize(100, 100))
+        self.image_gallery_frame = QFrame(Image_Capture_View)
+        self.image_gallery_frame.setObjectName(u"image_gallery_frame")
+        self.image_gallery_frame.setGeometry(QRect(25, 1700, 1030, 200))
+        self.image_gallery_frame.setFrameShape(QFrame.Shape.StyledPanel)
+        self.image_gallery_frame.setFrameShadow(QFrame.Shadow.Raised)
+        self.number_of_captured_images_label = QLabel(Image_Capture_View)
+        self.number_of_captured_images_label.setObjectName(u"number_of_captured_images_label")
+        self.number_of_captured_images_label.setGeometry(QRect(955, 1650, 100, 50))
+        self.number_of_captured_images_label.setAlignment(Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignTrailing|Qt.AlignmentFlag.AlignVCenter)
 
         self.retranslateUi(Image_Capture_View)
 
@@ -67,6 +76,7 @@ class Ui_Image_Capture_View(object):
         self.capture_button.setText("")
         self.preview_image_label.setText("")
         self.back_button.setText("")
+        self.number_of_captured_images_label.setText(QCoreApplication.translate("Image_Capture_View", u"NA/NA", None))
     # retranslateUi
 
 

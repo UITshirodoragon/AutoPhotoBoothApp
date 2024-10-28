@@ -59,7 +59,7 @@ class TemplateMenuPresenter:
 
     def handle_template_menu_label(self):
         self.view.template_menu_container_widget.setGeometry(0, 0, self.number_of_templates * 250, 250)
-        # self.view.template_menu_frame.mousePressEvent = self.handle_mouse_press_event_small_template_label_in_menu_frame()
+        self.view.template_menu_frame.mousePressEvent = self.handle_mouse_press_event_small_template_label_in_menu_frame()
         self.view.template_menu_frame.mouseMoveEvent = self.handle_mouse_move_event_small_template_label_in_menu_frame()
         # self.view.template_menu_frame.mouseReleaseEvent = self.handle_mouse_release_event_small_template_label_in_menu_frame()   
         container_layout = QHBoxLayout()
@@ -69,7 +69,7 @@ class TemplateMenuPresenter:
             small_template_label.setMaximumSize(250, 250)
             template_pixmap = QPixmap(self.template_control_model.get_template_with_field_from_database(i, 'path'))
             small_template_label.setPixmap(template_pixmap.scaled(200, 200, Qt.KeepAspectRatio))
-            small_template_label.mousePressEvent = self.handle_mouse_press_event_small_template_label_in_menu()  # Thiết lập sự kiện click
+            # small_template_label.mousePressEvent = self.handle_mouse_press_event_small_template_label_in_menu()  # Thiết lập sự kiện click
             small_template_label.mouseReleaseEvent = self.handle_mouse_release_event_small_template_label_in_menu(self.current_index)
             # small_template_label.mouseMoveEvent = self.handle_mouse_move_event_small_template_label_in_menu()
             container_layout.addWidget(small_template_label)
@@ -83,7 +83,8 @@ class TemplateMenuPresenter:
     # overide mouse event method for small template in menu for template menu frame
     def handle_mouse_press_event_small_template_label_in_menu_frame(self):
         def handler(event):
-            pass
+            if event.button() == Qt.LeftButton:
+                self.start_pos = event.pos()
         return handler
     
     def handle_mouse_move_event_small_template_label_in_menu_frame(self):
@@ -91,12 +92,15 @@ class TemplateMenuPresenter:
             if self.start_pos:
                 delta = event.pos() - self.start_pos
                 new_x = self.view.template_menu_container_widget.x() + delta.x()
-                new_x = max(min(new_x, 0), (self.number_of_templates*250)-1530)  # Ensure new_x is between -600 and 0
+                if self.view.template_menu_container_widget.width() >= 1030:
+                    new_x = max(min(new_x, 0), (1030 - self.view.template_menu_container_widget.width()))  # Ensure new_x is between -600 and 0
+                else:
+                    new_x = 0
                 self.view.template_menu_container_widget.move(new_x, self.view.template_menu_container_widget.y())
                 self.start_pos = event.pos()  
-                if delta.x() > 0:
+                if delta.x() > 5:
                     self.touch_event = "Swipe right"
-                elif delta.x() < 0:
+                elif delta.x() < -5:
                     self.touch_event = "Swipe left"
             
         return handler
@@ -110,8 +114,8 @@ class TemplateMenuPresenter:
     # overide mouse event method for small template in menu for template menu label
     def handle_mouse_press_event_small_template_label_in_menu(self):
         def handler(event):
-            if event.button() == Qt.LeftButton:
-                self.start_pos = event.pos()
+            pass
+            
             
         return handler
     
