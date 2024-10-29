@@ -1,7 +1,7 @@
 from __future__ import annotations
-from PyQt5.QtWidgets import QLabel, QVBoxLayout, QWidget, QMainWindow, QPushButton, QHBoxLayout
-from PyQt5.QtCore import pyqtSignal, Qt
-from PyQt5.QtGui import QPixmap, QImage
+from PyQt5.QtWidgets import QLabel, QVBoxLayout, QWidget, QMainWindow, QPushButton, QHBoxLayout, QSizePolicy, QFrame, QGraphicsOpacityEffect
+from PyQt5.QtCore import pyqtSignal, Qt, QSize, QRect, QPropertyAnimation, QTimer, QSequentialAnimationGroup
+from PyQt5.QtGui import QPixmap, QImage, QIcon, QPalette
 from PyQt5.uic import loadUi
 from typing import Protocol
 from cv2.typing import MatLike
@@ -63,3 +63,33 @@ class ImageCaptureView(QWidget, Ui_Image_Capture_View ):
             self.number_of_captured_images_label.setStyleSheet("color: red")
             self.number_of_captured_images_label.setText("NA/NA")
             
+    def update_countdown_number_label_gui(self, countdown_number_icon_path: str) -> None:
+        self.countdown_number_label.setPixmap(QPixmap(countdown_number_icon_path).scaled(360,360, Qt.KeepAspectRatio))
+        
+    def animate_countdown_number_label_gui(self):
+        
+        # # Animate the size
+        # self.size_animation = QPropertyAnimation(self.label, b"geometry")
+        # self.size_animation.setDuration(1000)
+        # self.size_animation.setStartValue(QRect(self.label.x(), self.label.y(), self.label.width(), self.label.height()))
+        # self.size_animation.setEndValue(QRect(self.label.x() - 50, self.label.y() - 50, self.label.width() + 100, self.label.height() + 100))
+        
+        # Animate the opacity
+        self.opacity_effect = QGraphicsOpacityEffect(self.countdown_number_label)
+        self.countdown_number_label.setGraphicsEffect(self.opacity_effect)
+        self.opacity_animation = QPropertyAnimation(self.opacity_effect, b"opacity")
+        self.opacity_animation.setDuration(1000)
+        self.opacity_animation.setStartValue(0.0)
+        self.opacity_animation.setEndValue(1.0)
+        
+        # # Group animations
+        self.animation_group = QSequentialAnimationGroup()
+        # self.animation_group.addAnimation(self.size_animation)
+        self.animation_group.addAnimation(self.opacity_animation)
+        
+        # # Start animations
+        self.animation_group.start()
+    
+    def clear_countdown_number_label_gui(self):
+        self.countdown_number_label.clear()
+        self.capture_button.setEnabled(True)

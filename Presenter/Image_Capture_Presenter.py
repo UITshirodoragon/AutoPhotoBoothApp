@@ -1,7 +1,7 @@
 from __future__ import annotations
-from PyQt5.QtCore import QTimer, Qt
+from PyQt5.QtCore import QTimer, Qt, QPropertyAnimation, QSequentialAnimationGroup
 from PyQt5.QtGui import QImage, QPixmap
-from PyQt5.QtWidgets import QStackedWidget, QLabel, QHBoxLayout
+from PyQt5.QtWidgets import QStackedWidget, QLabel, QHBoxLayout, QGraphicsOpacityEffect
 
 
 from Model.Image_Capture_Model import ImageCaptureModel
@@ -41,17 +41,40 @@ class ImageCapturePresenter:
         self.selected_image_id = 1
         self.touch_event: str = "Touch"
         
+        
+        self.time_left = 5
+        self.countdown_time = self.time_left
 
         # Thiết lập QTimer để cập nhật frame liên tục
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.handle_update_preview_image)
-        self.timer.timeout.connect(self.handle_update_preview_fps)
-        self.timer.start(10)
+        self.frame_update_timer = QTimer()
+        self.frame_update_timer.timeout.connect(self.handle_update_preview_image)
+        self.frame_update_timer.timeout.connect(self.handle_update_preview_fps)
+        self.frame_update_timer.start(10)
         
         self.view.ICV_back_button_signal.connect(self.handle_back_button_clicked)
         self.view.ICV_next_button_signal.connect(self.handle_next_button_clicked)
         self.view.ICV_capture_button_signal.connect(self.handle_capture_button_clicked)
 
+    def handle_start_countdown(self):
+        self.countdown_timer = QTimer()
+        self.countdown_timer.timeout.connect(self.handle_update_countdown)
+        self.countdown_timer.start(1000)
+        self.view.capture_button.setEnabled(False)  # Disable the button
+
+    def handle_update_countdown(self):
+        if self.time_left > 0:
+            self.view.update_countdown_number_label_gui(f"View/Icon/number_{self.time_left}_icon.png")
+            self.view.animate_countdown_number_label_gui()
+            self.time_left -= 1
+        else:
+            self.countdown_timer.stop()
+            self.time_left = self.countdown_time
+            self.view.countdown_number_label.clear()
+            self.handle_capture_button_clicked()
+            # self.view.capture_button.setEnabled(True)  # Enable the button
+    
+
+    
     def set_mediator(self, mediator: IMediator) -> None:
         self.mediator = mediator
 
@@ -61,7 +84,7 @@ class ImageCapturePresenter:
         self.user_control_model.delete_user_image_gallery(self.user_control_model.get_user())
         self.user_control_model.create_user_image_gallery()
         self.user_control_model.get_user().image_count = 0
-        
+        self.handle_clear_image_gallery_label()
         self.stack_view.setCurrentIndex(1)
         
     def handle_next_button_clicked(self) -> None:
@@ -73,6 +96,19 @@ class ImageCapturePresenter:
 
         
     def handle_capture_button_clicked(self) -> None:
+        if self.current_index < self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id, 'number_of_images'):
+            
+            self.handle_start_countdown()
+            image_capture_timer = QTimer()
+            image_capture_timer.singleShot(self.countdown_time * 1000 + 500, self.handle_capture_and_save_and_update_image_gallery)
+        
+        else:  
+            self.view.capture_button.setEnabled(True)
+            self.mediator.notify(sender = 'image_capture_presenter', receiver = 'template_export_presenter', event = 'update_final_template_with_images')
+            self.stack_view.setCurrentIndex(3)
+    
+            
+    def handle_capture_and_save_and_update_image_gallery(self):
         print(self.user_control_model.get_user().gallery_folder_path)
         if self.user_control_model.get_user().image_count < self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id,'number_of_images'):
             self.model.capture_signal_queue.put(obj = self.user_control_model.get_user().gallery_folder_path)
@@ -80,14 +116,11 @@ class ImageCapturePresenter:
             self.model.number_of_images.put(obj = self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id, 'number_of_images'))
             
             
-            timer = QTimer()
-            timer.singleShot(1000, self.handle_image_gallery_label)
+            image_gallery_update_timer = QTimer()
+            image_gallery_update_timer.singleShot(1000, self.handle_image_gallery_label)
             self.user_control_model.get_user().image_count += 1
-            self.view.update_number_of_captured_images_gui(self.user_control_model.get_user().image_count, self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id, 'number_of_images'))
-            # if self.user_control_model.get_user().image_count == self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id, 'number_of_images'):
-            #     self.mediator.notify(sender = 'image_capture_presenter', receiver = 'template_menu_presenter', event = 'update_final_template_with_images')
-            #     self.stack_view.setCurrentIndex(3)
-                
+            self.view.update_number_of_captured_images_gui(self.user_control_model.get_user().image_count, self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id, 'number_of_images'))    
+
     def handle_update_preview_image(self) -> None:
         frame = self.model.get_frame()
         if frame is not None:       
@@ -131,8 +164,16 @@ class ImageCapturePresenter:
         self.small_image_labels.append(small_image_label)
         self.current_index += 1
         
-        
-        
+    def handle_clear_image_gallery_label(self):
+        self.current_index = 1
+        self.small_image_labels = []
+        # Xóa tất cả các widget trong layout
+        while self.view.image_gallery_container_layout.count():
+            item = self.view.image_gallery_container_layout.takeAt(0)
+            widget = item.widget()
+            if widget is not None:
+                widget.deleteLater()
+            
         
     
     # overide mouse event method for small template in menu for template menu frame

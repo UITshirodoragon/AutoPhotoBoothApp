@@ -149,6 +149,19 @@
     <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
    </property>
   </widget>
+  <widget class="QLabel" name="countdown_number_label">
+   <property name="geometry">
+    <rect>
+     <x>360</x>
+     <y>705</y>
+     <width>360</width>
+     <height>360</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
  </widget>
  <resources>
   <include location="UI_ViewResource.qrc"/>

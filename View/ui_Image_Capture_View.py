@@ -63,6 +63,9 @@ class Ui_Image_Capture_View(object):
         self.number_of_captured_images_label.setObjectName(u"number_of_captured_images_label")
         self.number_of_captured_images_label.setGeometry(QRect(955, 1650, 100, 50))
         self.number_of_captured_images_label.setAlignment(Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignTrailing|Qt.AlignmentFlag.AlignVCenter)
+        self.countdown_number_label = QLabel(Image_Capture_View)
+        self.countdown_number_label.setObjectName(u"countdown_number_label")
+        self.countdown_number_label.setGeometry(QRect(360, 705, 360, 360))
 
         self.retranslateUi(Image_Capture_View)
 
@@ -77,7 +80,10 @@ class Ui_Image_Capture_View(object):
         self.preview_image_label.setText("")
         self.back_button.setText("")
         self.number_of_captured_images_label.setText(QCoreApplication.translate("Image_Capture_View", u"NA/NA", None))
+        self.countdown_number_label.setText("")
     # retranslateUi
+
+
 
 
 

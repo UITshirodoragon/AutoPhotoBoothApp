@@ -1,6 +1,12 @@
 <RCC>
   <qresource prefix="View">
     <file>Icon/restart_icon.png</file>
+    <file>Icon/number_0_icon.png</file>
+    <file>Icon/number_1_icon.png</file>
+    <file>Icon/number_2_icon.png</file>
+    <file>Icon/number_3_icon.png</file>
+    <file>Icon/number_4_icon.png</file>
+    <file>Icon/number_5_icon.png</file>
     <file>Icon/Capture_button.png</file>
     <file>Icon/down_arrow.png</file>
     <file>Icon/flash_off.png</file>

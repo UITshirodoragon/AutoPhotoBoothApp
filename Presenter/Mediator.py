@@ -11,6 +11,9 @@ class ImageCapturePresenter(Protocol):
         
     def handle_update_number_of_captured_images(self, number_of_captured_images: int, number_of_images_in_template: int) -> None:
         ...
+        
+    def handle_clear_image_gallery_label(self) -> None:
+        ...
 
 class TemplateMenuPresenter(Protocol):
     def set_mediator(self, mediator: IMediator) -> None:
@@ -46,3 +49,7 @@ class ConcreteMediator(IMediator):
         if sender == 'template_menu_presenter' and receiver == 'image_capture_presenter':
             if event == 'update_number_of_captured_images':
                 self.image_capture_presenter.handle_update_number_of_captured_images(data["number_of_images"], data["number_of_templates"])
+                
+        if sender == 'template_export_presenter' and receiver == 'image_capture_presenter':
+            if event == 'clear_image_gallery_label':
+                self.image_capture_presenter.handle_clear_image_gallery_label()

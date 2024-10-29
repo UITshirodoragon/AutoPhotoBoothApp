@@ -35,6 +35,8 @@ class TemplateExportPresenter:
         self.user_control_model.delete_user()
         self.user_control_model.disable_user()
         self.user_control_model.get_user().image_count = 0
+        if self.mediator:
+            self.mediator.notify('template_export_presenter', 'image_capture_presenter', 'clear_image_gallery_label')
     
     def handle_update_final_template_with_images(self) -> None:
         self.model.export_template_with_images(self.template_control_model.get_template_from_database(self.template_control_model.selected_template_id), self.user_control_model.get_user())
