@@ -52,10 +52,14 @@ class TemplateMenuPresenter:
         
         
     def handle_confirm_button_clicked(self) -> None:
-        self.stack_view.setCurrentIndex(2)
+        self.mediator.notify(sender="template_menu_presenter", 
+                             receiver="image_capture_presenter", 
+                             event="update_number_of_captured_images", 
+                             data={ "number_of_images": 0, 
+                                    "number_of_templates": self.template_control_model.get_template_with_field_from_database(self.selected_template_id, 'number_of_images')})
         # confirm final
         self.template_control_model.selected_template_id = self.selected_template_id
-        
+        self.stack_view.setCurrentIndex(2)
 
     def handle_template_menu_label(self):
         self.view.template_menu_container_widget.setGeometry(0, 0, self.number_of_templates * 250, 250)

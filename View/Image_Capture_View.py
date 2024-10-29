@@ -58,7 +58,7 @@ class ImageCaptureView(QWidget, Ui_Image_Capture_View ):
                 self.number_of_captured_images_label.setStyleSheet("color: green")
             else:
                 self.number_of_captured_images_label.setStyleSheet("color: red")
-            self.number_of_captured_images_label.setText(f"{number_of_captured_images/number_of_images_in_template}")
+            self.number_of_captured_images_label.setText(f"{number_of_captured_images}/{number_of_images_in_template}")
         else:
             self.number_of_captured_images_label.setStyleSheet("color: red")
             self.number_of_captured_images_label.setText("NA/NA")

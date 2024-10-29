@@ -70,8 +70,7 @@ class ImageCaptureModel:
         while True:
             frame = camera.capture_frame()
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            frame = cv2.resize(frame, (400, 300))
-            frame_queue.put(frame)
+            frame_queue.put(frame[:, 140:500 ])
             self.calculate_preview_fps(fps_queue)
             if not number_of_images.empty():
                 capture_count_max = number_of_images.get()

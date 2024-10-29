@@ -41,9 +41,7 @@ class ImageCapturePresenter:
         self.selected_image_id = 1
         self.touch_event: str = "Touch"
         
-        
-        # self.handle_image_gallery_label()
-        
+
         # Thiết lập QTimer để cập nhật frame liên tục
         self.timer = QTimer()
         self.timer.timeout.connect(self.handle_update_preview_image)
@@ -69,7 +67,7 @@ class ImageCapturePresenter:
     def handle_next_button_clicked(self) -> None:
         # self.stack_view.setCurrentIndex(3) 
         if self.user_control_model.get_user().image_count == self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id, 'number_of_images'):
-            self.mediator.notify(sender = 'image_capture_presenter', receiver = 'template_menu_presenter', event = 'update_final_template_with_images')
+            self.mediator.notify(sender = 'image_capture_presenter', receiver = 'template_export_presenter', event = 'update_final_template_with_images')
         self.stack_view.setCurrentIndex(3)
         pass
 
@@ -84,10 +82,8 @@ class ImageCapturePresenter:
             
             timer = QTimer()
             timer.singleShot(1000, self.handle_image_gallery_label)
-            
-            
-            
             self.user_control_model.get_user().image_count += 1
+            self.view.update_number_of_captured_images_gui(self.user_control_model.get_user().image_count, self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id, 'number_of_images'))
             # if self.user_control_model.get_user().image_count == self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id, 'number_of_images'):
             #     self.mediator.notify(sender = 'image_capture_presenter', receiver = 'template_menu_presenter', event = 'update_final_template_with_images')
             #     self.stack_view.setCurrentIndex(3)
@@ -96,6 +92,13 @@ class ImageCapturePresenter:
         frame = self.model.get_frame()
         if frame is not None:       
             self.view.update_preview_image_gui(frame)
+            
+            
+    def handle_update_number_of_captured_images(self, number_of_images: int = None, number_of_templates: int = None) -> None:
+        if number_of_images is not None:
+            self.view.update_number_of_captured_images_gui(number_of_images, number_of_templates)
+        else:
+            self.view.update_number_of_captured_images_gui(self.user_control_model.get_user().image_count, self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id, 'number_of_images'))
 
     def handle_update_preview_fps(self) -> None:
         fps = self.model.get_fps()

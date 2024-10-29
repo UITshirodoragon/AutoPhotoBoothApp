@@ -8,10 +8,14 @@ class IMediator(Protocol):
 class ImageCapturePresenter(Protocol):
     def set_mediator(self, mediator: IMediator) -> None:
         ...
+        
+    def handle_update_number_of_captured_images(self, number_of_captured_images: int, number_of_images_in_template: int) -> None:
+        ...
 
 class TemplateMenuPresenter(Protocol):
     def set_mediator(self, mediator: IMediator) -> None:
         ...
+        
         
 class TemplateExportPresenter(Protocol):
     def set_mediator(self, mediator: IMediator) -> None:
@@ -35,6 +39,10 @@ class ConcreteMediator(IMediator):
         self.template_export_presenter.set_mediator(self)
 
     def notify(self, sender: str, receiver: str, event: str, data: dict = None) -> None:
-        if sender == 'image_capture_presenter' and receiver == 'template_menu_presenter':
+        if sender == 'image_capture_presenter' and receiver == 'template_export_presenter':
             if event == 'update_final_template_with_images':
                 self.template_export_presenter.handle_update_final_template_with_images()
+        
+        if sender == 'template_menu_presenter' and receiver == 'image_capture_presenter':
+            if event == 'update_number_of_captured_images':
+                self.image_capture_presenter.handle_update_number_of_captured_images(data["number_of_images"], data["number_of_templates"])
