@@ -1,0 +1,3 @@
+nghiên cứu về QPropertyAnimation, QPiont, QPaint
+nghiên cứu về các thao tác chạm cảm ứng
+nghiên cứu về các thao tác Qscrollarea
