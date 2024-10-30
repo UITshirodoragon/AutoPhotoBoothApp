@@ -81,11 +81,14 @@ class ImageCapturePresenter:
 
     def handle_back_button_clicked(self) -> None:
         # when user change their mind
-        self.user_control_model.delete_user_image_gallery(self.user_control_model.get_user())
-        self.user_control_model.create_user_image_gallery()
-        self.user_control_model.get_user().image_count = 0
-        self.handle_clear_image_gallery_label()
-        self.stack_view.setCurrentIndex(1)
+        if self.view.show_dialog_alert_to_clear_image_gallery():
+            self.user_control_model.delete_user_image_gallery(self.user_control_model.get_user())
+            self.user_control_model.create_user_image_gallery()
+            self.user_control_model.get_user().image_count = 0
+            self.handle_clear_image_gallery_label()
+            self.stack_view.setCurrentIndex(1)
+        else:
+            pass
         
     def handle_next_button_clicked(self) -> None:
         # self.stack_view.setCurrentIndex(3) 
