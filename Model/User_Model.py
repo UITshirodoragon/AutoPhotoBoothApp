@@ -9,6 +9,7 @@ class User:
         self.email = None
         self.is_working = True
         self.gallery_folder_path = None
+        self.image_count = 0
         
     def delete(self):
         del self
@@ -23,7 +24,7 @@ class UserModel:
         self.user_id_count = 0
         self.user_count = 0
         self.user_list = []
-        self.base_image_gallery_path = "Data\ImageGallery"
+        self.base_image_gallery_path = "Data/ImageGallery"
         
         
         
@@ -62,7 +63,7 @@ class UserModel:
         if self.current_user.is_working:
             
             #delete previous user
-            self.head_user = self.user_list[0]
+            self.head_user: User = self.user_list[0]
             if not self.head_user.is_working and self.user_count > self.user_limit_count:
                 self.user_list.remove(self.head_user)
                 self.delete_user_image_gallery(self.head_user)
@@ -72,7 +73,7 @@ class UserModel:
         else:
             pass
         
-    def get_user(self, index = -1):
+    def get_user(self, index = -1) -> User:
         return self.user_list[index]
     
     def create_user_image_gallery(self):
@@ -81,9 +82,10 @@ class UserModel:
         if os.path.exists(self.folder_name):
             shutil.rmtree(self.folder_name)
         os.makedirs(self.folder_name, exist_ok=True)  # Tạo thư mục
-        self.current_user.gallery_folder_path = self.folder_name
+        self.current_user.gallery_folder_path = self.folder_name.replace('\\','/')
+        print(f"Create folder: {self.folder_name}")
         
-    def delete_user_image_gallery(self, user):
+    def delete_user_image_gallery(self, user: User):
         
         if os.path.exists(user.gallery_folder_path):
             shutil.rmtree(user.gallery_folder_path)  # Xóa thư mục và tất cả nội dung bên trong
