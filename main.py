@@ -16,6 +16,7 @@ from Model.Template_Menu_Model import TemplateMenuModel
 from Model.Template_Export_Model import TemplateExportModel
 from Model.User_Model import UserModel, User
 from Model.Template_Model import TemplateModel 
+from Model.Google_Drive_Model import GoogleDriveModel
 
 from PyQt5.QtWidgets import QApplication, QStackedWidget, QScrollArea, QMainWindow, QWidget, QVBoxLayout, QScrollArea
 from PyQt5.QtCore import QSize, QRect, Qt
@@ -81,17 +82,18 @@ if __name__ == "__main__":
     template_menu_model = TemplateMenuModel()
     image_capture_model = ImageCaptureModel()
     template_export_model = TemplateExportModel()
+    google_drive_model = GoogleDriveModel()
     
     start_view = StartView()
     template_menu_view = TemplateMenuView()
     image_capture_view = ImageCaptureView()
     template_export_view = TemplateExportView()   
      
-    start_presenter = StartPresenter(start_model, start_view, stack_view, user_control_model, app)
+    start_presenter = StartPresenter(start_model, start_view, stack_view, user_control_model, google_drive_model, app)
 
     template_menu_presenter = TemplateMenuPresenter(template_menu_model, template_menu_view, stack_view, user_control_model, template_control_model)
     
-    template_export_presenter = TemplateExportPresenter(template_export_model, template_export_view, stack_view, user_control_model, template_control_model)
+    template_export_presenter = TemplateExportPresenter(template_export_model, template_export_view, stack_view, user_control_model, template_control_model, google_drive_model)
     
     image_capture_presenter = ImageCapturePresenter(image_capture_model,image_capture_view, stack_view, user_control_model, template_control_model)
     

@@ -107,8 +107,9 @@ class ImageCapturePresenter:
         
         else:  
             self.view.capture_button.setEnabled(True)
-            self.mediator.notify(sender = 'image_capture_presenter', receiver = 'template_export_presenter', event = 'update_final_template_with_images')
             self.stack_view.setCurrentIndex(3)
+            self.mediator.notify(sender = 'image_capture_presenter', receiver = 'template_export_presenter', event = 'update_final_template_with_images')
+            
     
             
     def handle_capture_and_save_and_update_image_gallery(self):
