@@ -1,72 +1,66 @@
-# -*- coding: utf-8 -*-
+import sys
+import time
+from PyQt5.QtWidgets import QApplication, QMainWindow, QProgressBar, QLabel
+from PyQt5.QtCore import Qt, QThread, pyqtSignal
 
-################################################################################
-## Form generated from reading UI file 'designerEPQmqI.ui'
-##
-## Created by: Qt User Interface Compiler version 6.7.2
-##
-## WARNING! All changes made in this file will be lost when recompiling UI file!
-################################################################################
+class Worker(QThread):
+    progress = pyqtSignal(int)
 
-from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-    QMetaObject, QObject, QPoint, QRect,
-    QSize, QTime, QUrl, Qt)
-from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-    QFont, QFontDatabase, QGradient, QIcon,
-    QImage, QKeySequence, QLinearGradient, QPainter,
-    QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QAbstractScrollArea, QApplication, QScrollArea, QSizePolicy,
-    QStackedWidget, QWidget)
+    def run(self):
+        total = 100000
+        for i in range(1, total + 1):
+            time.sleep(0.0001)  # Simulate a long process
+            percent_complete = int((i / total) * 100)
+            self.progress.emit(percent_complete)
 
-class Ui_Form(object):
-    def setupUi(self, Form):
-        if not Form.objectName():
-            Form.setObjectName(u"Form")
-        Form.resize(600, 600)
-        Form.setMinimumSize(QSize(200, 200))
-        Form.setMaximumSize(QSize(600, 600))
-        Form.setBaseSize(QSize(200, 200))
-        self.scrollArea = QScrollArea(Form)
-        self.scrollArea.setObjectName(u"scrollArea")
-        self.scrollArea.setGeometry(QRect(0, 0, 600, 600))
-        self.scrollArea.setMinimumSize(QSize(200, 200))
-        self.scrollArea.setMaximumSize(QSize(600, 600))
-        self.scrollArea.setBaseSize(QSize(0, 0))
-        self.scrollArea.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
-        self.scrollArea.setSizeAdjustPolicy(QAbstractScrollArea.SizeAdjustPolicy.AdjustToContents)
-        self.scrollArea.setWidgetResizable(False)
-        self.scrollArea.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.scrollAreaWidgetContents = QWidget()
-        self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 598, 598))
-        self.stackedWidget = QStackedWidget(self.scrollAreaWidgetContents)
-        self.stackedWidget.setObjectName(u"stackedWidget")
-        self.stackedWidget.setGeometry(QRect(0, 0, 600, 600))
-        self.page = QWidget()
-        self.page.setObjectName(u"page")
-        self.widget = QWidget(self.page)
-        self.widget.setObjectName(u"widget")
-        self.widget.setGeometry(QRect(130, 170, 371, 291))
-        self.widget.setStyleSheet(u"background-color: rgb(0, 170, 127);")
-        self.stackedWidget.addWidget(self.page)
-        self.page_2 = QWidget()
-        self.page_2.setObjectName(u"page_2")
-        self.widget_2 = QWidget(self.page_2)
-        self.widget_2.setObjectName(u"widget_2")
-        self.widget_2.setGeometry(QRect(100, 100, 381, 231))
-        self.widget_2.setStyleSheet(u"background-color: rgb(255, 85, 127);")
-        self.stackedWidget.addWidget(self.page_2)
-        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
+class LoadingScreen(QMainWindow):
+    progress = pyqtSignal(int)
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Loading")
+        self.setGeometry(0, 0, 500, 500)
+        self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.CustomizeWindowHint)
 
-        self.retranslateUi(Form)
+        self.progressBar = QProgressBar(self)
+        self.progressBar.setGeometry(50, 50, 200, 25)
+        self.progressBar.setMaximum(100)
 
-        self.stackedWidget.setCurrentIndex(0)
+        self.label = QLabel("Processing...", self)
+        self.label.setGeometry(50, 80, 200, 25)
+        self.label.setAlignment(Qt.AlignCenter)
+
+        self.completionLabel = QLabel(self)
+        self.completionLabel.setGeometry(0, 0, 0, 0)  # Initially hidden
+
+        self.worker = QThread()
+        self.worker.run = self.run
+        self.progress.connect(self.update_progress)
+        
+        self.worker.start()
+        
+        
+        
 
 
-        QMetaObject.connectSlotsByName(Form)
-    # setupUi
 
-    def retranslateUi(self, Form):
-        Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
-    # retranslateUi
+    def update_progress(self, value):
+        self.progressBar.setValue(value)
+        if value == 100:
+            self.label.setText("Completed")
+            self.completionLabel.setGeometry(50, 50, 400, 400)
+            self.completionLabel.setStyleSheet("background-color: green;")
+            self.completionLabel.setText("Task Completed")
+            self.completionLabel.setAlignment(Qt.AlignCenter)
+            
+    def run(self):
+        total = 100000
+        for i in range(1, total + 1):
+            time.sleep(0.0001)  # Simulate a long process
+            percent_complete = int((i / total) * 100)
+            self.progress.emit(percent_complete)
 
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = LoadingScreen()
+    window.show()
+    sys.exit(app.exec_())
