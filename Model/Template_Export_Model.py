@@ -1,4 +1,8 @@
 from Model.Template_Model import TemplateModel
+from Model.Google_Drive_Model import GoogleDriveModel
+
+
+
 from PIL import Image
 from Model.User_Model import User
 import json
@@ -28,16 +32,16 @@ class TemplateExportModel():
             if progress_emit_signal_function is not None:
                 # for num in range(value, min((img_index)*100//(template['number_of_images'])), 99):
                     # print((img_index+1)*100//(template['number_of_images']))
-                progress_emit_signal_function((img_index)*100//(template['number_of_images']))
+                progress_emit_signal_function((img_index)*100//(template['number_of_images'])-25)
                 # time.sleep(0.5)
                 # value = (img_index)*100//(template['number_of_images'])
                 
             
         
-        background.save(user.gallery_folder_path +'/final.png')
+        background.save(user.gallery_folder_path + f'/final_user_{user.id}.png')
          
-        if finished_emit_signal_function is not None:
-            finished_emit_signal_function()
+        # if finished_emit_signal_function is not None:
+        #     finished_emit_signal_function()
         
         
         
@@ -45,11 +49,16 @@ class TemplateExportWorker(QThread):
     TEW_progress_signal = pyqtSignal(int)
     TEW_finished_signal = pyqtSignal()
 
-    def __init__(self, template_export_model: TemplateExportModel, template: dict, user: User):
+    def __init__(self, 
+                 template_export_model: TemplateExportModel,
+                 google_drive_model: GoogleDriveModel,
+                 template: dict, 
+                 user: User):
         super().__init__()
         self.template: dict = template
         self.user: User = user
         self.template_export_model = template_export_model
+        self.GoogleDriveModel = google_drive_model
         
     def set_template(self, template: dict):
         self.template = template
@@ -59,6 +68,18 @@ class TemplateExportWorker(QThread):
         
     def run(self):
         self.template_export_model.export_template_with_images(self.template, self.user, self.TEW_progress_signal.emit, self.TEW_finished_signal.emit)
+        
+        template_drive_file_id = self.GoogleDriveModel.Upload(f'final_user_{self.user.id}.png', self.user.gallery_folder_path + f'/final_user_{self.user.id}.png', 'cloud_drive_folder')
+        self.TEW_progress_signal.emit(80)
+        
+        self.GoogleDriveModel.make_file_public(template_drive_file_id)
+        self.TEW_progress_signal.emit(90)
+        
+        self.GoogleDriveModel.Create_QR(template_drive_file_id, self.user.gallery_folder_path + f'/qr_code_google_drive_user_{self.user.id}.png')
+        self.TEW_progress_signal.emit(100)
+        time.sleep(1)
+        self.TEW_finished_signal.emit()
+        
         # img_index = 0
         # background = Image.open(self.template['path'])
         # img_pos_list = json.loads(self.template['image_positions_list'])  # type list of list

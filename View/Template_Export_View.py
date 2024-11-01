@@ -50,6 +50,11 @@ class TemplateExportView(QWidget, Ui_TemplateExportView):
         scaled_template_pixmap = template_pixmap.scaled(1030, 1030, Qt.KeepAspectRatio)
         self.template_show_label.setPixmap(scaled_template_pixmap)
         
+    def update_qr_code_image_gui(self, qr_code_image_path) -> None:
+        qr_code_image_pixmap = QPixmap(qr_code_image_path)
+        scaled_qr_code_image_pixmap = qr_code_image_pixmap.scaled(1030, 500, Qt.KeepAspectRatio)
+        self.qr_code_image_label.setPixmap(scaled_qr_code_image_pixmap)
+        
     def hide_all_widgets(self) -> None:
         self.scan_text_label.hide()
         self.thanks_text_label.hide()

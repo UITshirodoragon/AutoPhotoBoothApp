@@ -10,6 +10,7 @@ from View.Template_Export_View import TemplateExportView
 from Model.Template_Export_Model import TemplateExportModel, TemplateExportWorker
 from Model.User_Model import UserModel, User
 from Model.Template_Model import TemplateModel
+from Model.Google_Drive_Model import GoogleDriveModel
 
 from Presenter.Mediator import IMediator, ConcreteMediator
 
@@ -17,12 +18,18 @@ class TemplateExportPresenter:
     
     
     
-    def __init__(self, model: TemplateExportModel, view: TemplateExportView, stack_view: QStackedWidget, user_control_model: UserModel, template_control_model: TemplateModel ) -> None:
+    def __init__(self, model: TemplateExportModel, 
+                 view: TemplateExportView, 
+                 stack_view: QStackedWidget, 
+                 user_control_model: UserModel, 
+                 template_control_model: TemplateModel,
+                 google_drive_model: GoogleDriveModel) -> None:
         self.model = model
         self.view = view
         self.stack_view = stack_view
         self.user_control_model = user_control_model
         self.template_control_model = template_control_model
+        self.google_drive_model = google_drive_model
         self.mediator = None
         
         self.view.TEV_back_button_signal.connect(self.handle_back_button_clicked)
@@ -37,6 +44,7 @@ class TemplateExportPresenter:
         
     def handle_start_template_export_worker(self) -> None:
         self.template_export_worker = TemplateExportWorker(self.model, 
+                                                           self.google_drive_model,
                                                             self.template_control_model.get_template_from_database(self.template_control_model.selected_template_id), 
                                                             self.user_control_model.get_user())
         
@@ -58,8 +66,9 @@ class TemplateExportPresenter:
             self.is_update_final_template_with_images_finished = True
             self.template_export_worker.quit()
             self.view.show_all_widgets()
-            self.view.update_final_template_with_images_gui(self.user_control_model.get_user().gallery_folder_path + '/final.png')
-        
+            self.view.update_final_template_with_images_gui(self.user_control_model.get_user().gallery_folder_path + f'/final_user_{self.user_control_model.get_user().id}.png')
+            self.view.update_qr_code_image_gui(self.user_control_model.get_user().gallery_folder_path + f'/qr_code_google_drive_user_{self.user_control_model.get_user().id}.png')
+            
     def set_mediator(self, mediator: IMediator) -> None:
         self.mediator = mediator    
     
