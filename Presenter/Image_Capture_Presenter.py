@@ -237,6 +237,7 @@ class ImageCapturePresenter:
             if event.button() == Qt.LeftButton:
                 if self.touch_event == "Touch":
                     print(index)
+                    self.stack_view.setCurrentIndex(4)
                     # for label in self.small_image_labels:
                     #     if label.geometry().contains(self.view.image_gallery_container_widget.mapFromParent(event.pos())):
                     #         self.view.update_template_show_label(self.template_control_model.get_template_with_field_from_database(index, 'path'))  # Kích thước lớn hơn
