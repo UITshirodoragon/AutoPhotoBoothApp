@@ -98,13 +98,13 @@ class CameraConfigurationModel:
                 ret, frame = self.camera.read()
                 if ret:
                     frame = cv2.flip(frame, 1)
-                    return frame
+                    
             if plf.system() == "Linux":
                 frame = self.Picamera.capture_array("main")
                 
                 ##frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
                 frame = cv2.flip(frame, 1)
-        
+            return frame
         except Exception as error:
             print(f"Error {error}")
             

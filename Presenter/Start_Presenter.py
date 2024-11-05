@@ -14,6 +14,8 @@ from Model.User_Model import *
 
 from View.Start_View import StartView
 
+from Presenter.Mediator import IMediator
+
 # Presenter class
 class StartPresenter:
     def __init__(self, model: StartModel, 
@@ -28,15 +30,20 @@ class StartPresenter:
         self.user_control_model = user_control_model
         self.google_drive_model = google_drive_model
         self.app = app
+        self.mediator = None
 
         self.view.SV_quit_button_signal.connect(self.handle_quit_button_clicked)
         self.view.SV_start_button_signal.connect(self.handle_start_button_clicked)
+
+    def set_mediator(self, mediator: IMediator) -> None:
+        self.mediator = mediator
 
     def handle_start_button_clicked(self) -> None:
         self.stack_view.setCurrentIndex(1)
         self.user_control_model.create_user()
 
     def handle_quit_button_clicked(self) -> None:
+        self.mediator.notify('start_presenter', 'image_capture_presenter', 'stop_preview_process')
         self.google_drive_model.Delete('cloud_drive_folder')
         self.view.close()
         self.app.quit()

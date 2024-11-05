@@ -27,8 +27,8 @@ class ImageCaptureModel:
     def __init__(self) -> None:
         
         self.camera = CameraConfigurationModel()
-
         
+        self.camera.init_camera()
         
         self.preview_image_queue = Queue()
         self.preview_image_process = None
@@ -41,15 +41,18 @@ class ImageCaptureModel:
     
     def start_preview_process(self) -> None:
         
-        self.preview_image_process = Process(target=self.preview_update_frame_process, 
-                                             args=(self.preview_fps_queue, 
-                                                   self.preview_image_queue, 
-                                                   self.capture_signal_queue,
-                                                    self.image_captured_count,
-                                                    self.number_of_images,
-                                                   self.camera)
-                                             )
-        self.preview_image_process.start()
+        # self.preview_image_process = Process(target=self.preview_update_frame_process, 
+        #                                      args=(self.preview_fps_queue, 
+        #                                            self.preview_image_queue, 
+        #                                            self.capture_signal_queue,
+        #                                             self.image_captured_count,
+        #                                             self.number_of_images,
+        #                                            self.camera)
+        #                                      )
+        # self.preview_image_process.start()
+        
+        pass
+        
     
     
     def preview_update_frame_process(self, 
@@ -61,30 +64,36 @@ class ImageCaptureModel:
                                      camera: CameraConfigurationModel
                                      
                                      ) -> None:
-        camera.init_camera()
+        # camera.init_camera()
         
         self.preview_frame_count = 0
         self.preview_last_time = time.time()
         capture_count_max = None
 
-        while True:
-            frame = camera.capture_frame()
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            frame_queue.put(frame[:, 140:500 ])
-            self.calculate_preview_fps(fps_queue)
-            if not number_of_images.empty():
-                capture_count_max = number_of_images.get()
-                print(f"Max number of images = {capture_count_max}")
-                
-            if (not capture_signal_queue.empty() and not image_captured_count.empty()):
-                camera.captured_and_saved_images_count = image_captured_count.get()
-                if camera.captured_and_saved_images_count < capture_count_max:
-                    camera.capture_and_save_image(capture_signal_queue.get())
-                else:
-                    print("Out of images in template")
+        # while True:
+        frame = camera.capture_frame()
+        # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        frame_queue.put(frame)#  [:, 140:500 ]
+        self.calculate_preview_fps(fps_queue)
+        if not number_of_images.empty():
+            capture_count_max = number_of_images.get()
+            print(f"Max number of images = {capture_count_max}")
+            
+        if (not capture_signal_queue.empty() and not image_captured_count.empty()):
+            camera.captured_and_saved_images_count = image_captured_count.get()
+            if camera.captured_and_saved_images_count < capture_count_max:
+                camera.capture_and_save_image(capture_signal_queue.get())
+            else:
+                print("Out of images in template")
                     
                     
     def get_frame(self) -> MatLike:
+        self.preview_update_frame_process(self.preview_fps_queue, 
+                                         self.preview_image_queue, 
+                                         self.capture_signal_queue,
+                                         self.image_captured_count,
+                                         self.number_of_images,
+                                         self.camera)
         if not self.preview_image_queue.empty():
             return self.preview_image_queue.get()
         return None
@@ -104,6 +113,8 @@ class ImageCaptureModel:
             fps_queue.put(fps)
 
     def stop_preview_process(self) -> None:
-        if self.preview_image_process is not None:
-            self.preview_image_process.terminate()
+        self.camera.stop_camera()
+        # if self.preview_image_process is not None:
+        #     self.camera.stop_camera()
+        #     self.preview_image_process.terminate()
     
