@@ -1,3 +1,8 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+
 from View.Image_Capture_View import ImageCaptureView
 from View.Start_View import StartView
 from View.Template_Menu_View import TemplateMenuView
@@ -103,7 +108,7 @@ if __name__ == "__main__":
     
     template_image_preview_presenter = TemplateImagePreviewPresenter(template_export_model, template_image_preview_view, stack_view, user_control_model, template_control_model)
     
-    mediator = ConcreteMediator(image_capture_presenter, template_menu_presenter, template_export_presenter, template_image_preview_presenter)
+    mediator = ConcreteMediator(start_presenter, image_capture_presenter, template_menu_presenter, template_export_presenter, template_image_preview_presenter)
     
     stack_view.addWidget(start_view)
     stack_view.addWidget(template_menu_view)
@@ -132,7 +137,7 @@ if __name__ == "__main__":
     elif plf.system() == "Linux":
         
         main_widget = handle_app_show_on_portrait_screen(main_screen, stack_view)
-        main_widget.showFullScreen()
+        main_widget.show()
     sys.exit(app.exec_())
 
 
