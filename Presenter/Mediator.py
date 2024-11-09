@@ -31,6 +31,12 @@ class TemplateExportPresenter(Protocol):
     def handle_update_final_template_with_images(self) -> None:
         ...
 
+class TemplateImagePreviewPresenter(Protocol):
+    def set_mediator(self, mediator: IMediator) -> None:
+        ...
+
+
+
 class StartPresenter(Protocol):
     def set_mediator(self, mediator: IMediator) -> None:
         ...
@@ -40,14 +46,18 @@ class ConcreteMediator(IMediator):
                  start_presenter: StartPresenter,
                  image_capture_presenter: ImageCapturePresenter, 
                  template_menu_presenter: TemplateMenuPresenter, 
-                 template_export_presenter: TemplateExportPresenter) -> None:
+                 template_export_presenter: TemplateExportPresenter,
+                 template_image_preview_presenter: TemplateImagePreviewPresenter ) -> None:
         self.image_capture_presenter: ImageCapturePresenter = image_capture_presenter
         self.template_menu_presenter: TemplateMenuPresenter = template_menu_presenter
         self.template_export_presenter: TemplateExportPresenter = template_export_presenter
+        self.template_image_preview_presenter: TemplateImagePreviewPresenter = template_image_preview_presenter
         self.start_presenter: StartPresenter = start_presenter
+        
         self.image_capture_presenter.set_mediator(self)
         self.template_menu_presenter.set_mediator(self)
         self.template_export_presenter.set_mediator(self)
+        self.template_image_preview_presenter.set_mediator(self)
         self.start_presenter.set_mediator(self)
 
     def notify(self, sender: str, receiver: str, event: str, data: dict = None) -> None:

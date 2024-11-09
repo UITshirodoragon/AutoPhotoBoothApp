@@ -7,12 +7,14 @@ from View.Image_Capture_View import ImageCaptureView
 from View.Start_View import StartView
 from View.Template_Menu_View import TemplateMenuView
 from View.Template_Export_View import TemplateExportView
+from View.Template_Image_Preview_View import TemplateImagePreviewView
 
 from Presenter.Start_Presenter import StartPresenter
 from Presenter.Image_Capture_Presenter import ImageCapturePresenter
 from Presenter.Template_Menu_Presenter import TemplateMenuPresenter
 from Presenter.Template_Export_Presenter import TemplateExportPresenter
 from Presenter.Mediator import IMediator, ConcreteMediator
+from Presenter.Template_Image_Preview_Presenter import TemplateImagePreviewPresenter
 
 
 from Model.Image_Capture_Model import ImageCaptureModel
@@ -93,7 +95,9 @@ if __name__ == "__main__":
     template_menu_view = TemplateMenuView()
     image_capture_view = ImageCaptureView()
     template_export_view = TemplateExportView()   
-     
+    template_image_preview_view = TemplateImagePreviewView()
+    
+    
     start_presenter = StartPresenter(start_model, start_view, stack_view, user_control_model, google_drive_model, app)
 
     template_menu_presenter = TemplateMenuPresenter(template_menu_model, template_menu_view, stack_view, user_control_model, template_control_model)
@@ -102,12 +106,15 @@ if __name__ == "__main__":
     
     image_capture_presenter = ImageCapturePresenter(image_capture_model,image_capture_view, stack_view, user_control_model, template_control_model)
     
-    mediator = ConcreteMediator(start_presenter, image_capture_presenter, template_menu_presenter, template_export_presenter)
+    template_image_preview_presenter = TemplateImagePreviewPresenter(template_export_model, template_image_preview_view, stack_view, user_control_model, template_control_model)
+    
+    mediator = ConcreteMediator(start_presenter, image_capture_presenter, template_menu_presenter, template_export_presenter, template_image_preview_presenter)
     
     stack_view.addWidget(start_view)
     stack_view.addWidget(template_menu_view)
     stack_view.addWidget(image_capture_view)
     stack_view.addWidget(template_export_view)
+    stack_view.addWidget(template_image_preview_view)
     
     
     stack_view.setCurrentIndex(0)
