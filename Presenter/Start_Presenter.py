@@ -39,6 +39,7 @@ class StartPresenter:
         self.mediator = mediator
 
     def handle_start_button_clicked(self) -> None:
+        self.mediator.notify('start_presenter', 'image_capture_presenter', 'start_preview_process')
         self.stack_view.setCurrentIndex(1)
         self.user_control_model.create_user()
 
