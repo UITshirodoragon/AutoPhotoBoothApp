@@ -17,6 +17,9 @@ class ImageCapturePresenter(Protocol):
 
     def handle_stop_update_preview_image(self) -> None:
         ...
+        
+    def handle_start_update_preview_image(self) -> None:
+        ...
     
     
 class TemplateMenuPresenter(Protocol):
@@ -76,3 +79,6 @@ class ConcreteMediator(IMediator):
         if sender == 'start_presenter' and receiver == 'image_capture_presenter':
             if event == 'stop_preview_process':
                 self.image_capture_presenter.handle_stop_update_preview_image()
+            
+            if event == 'start_preview_process':
+                self.image_capture_presenter.handle_start_update_preview_image()

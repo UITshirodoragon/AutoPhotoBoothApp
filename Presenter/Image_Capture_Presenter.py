@@ -32,7 +32,7 @@ class ImageCapturePresenter:
         
         
         # Khởi động camera trong model
-        self.model.start_preview_process()
+        # self.model.start_preview_process()
         
         
         self.current_index = 1
@@ -107,6 +107,9 @@ class ImageCapturePresenter:
         
         else:  
             self.view.capture_button.setEnabled(True)
+            
+            self.frame_update_timer.stop()
+            
             self.stack_view.setCurrentIndex(3)
             self.mediator.notify(sender = 'image_capture_presenter', receiver = 'template_export_presenter', event = 'update_final_template_with_images')
             
@@ -115,16 +118,20 @@ class ImageCapturePresenter:
     def handle_capture_and_save_and_update_image_gallery(self):
         print(self.user_control_model.get_user().gallery_folder_path)
         if self.user_control_model.get_user().image_count < self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id,'number_of_images'):
-            self.model.capture_signal_queue.put(obj = self.user_control_model.get_user().gallery_folder_path)
-            self.model.image_captured_count.put(obj = self.user_control_model.get_user().image_count)
-            self.model.number_of_images.put(obj = self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id, 'number_of_images'))
+            # self.model.capture_signal_queue.put(obj = self.user_control_model.get_user().gallery_folder_path)
+            # self.model.image_captured_count.put(obj = self.user_control_model.get_user().image_count)
+            # self.model.number_of_images.put(obj = self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id, 'number_of_images'))
+            self.model.capture_image(user_image_gallery_folder_path = self.user_control_model.get_user().gallery_folder_path,
+                                     image_captured_count = self.user_control_model.get_user().image_count)
             
             
             image_gallery_update_timer = QTimer()
             image_gallery_update_timer.singleShot(1000, self.handle_image_gallery_label)
             self.user_control_model.get_user().image_count += 1
             self.view.update_number_of_captured_images_gui(self.user_control_model.get_user().image_count, self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id, 'number_of_images'))    
-
+        else:
+            print("Out of images in template")
+            
     def handle_update_preview_image(self) -> None:
         frame = self.model.get_frame()
         if frame is not None:       
@@ -141,7 +148,11 @@ class ImageCapturePresenter:
         fps = self.model.get_fps()
         if fps is not None:
             self.view.update_preview_fps_gui(fps)
-            
+    
+    
+    def handle_start_update_preview_image(self) -> None:
+        self.frame_update_timer.start(10)
+        
     def handle_stop_update_preview_image(self) -> None:
         self.model.stop_preview_process()
         
