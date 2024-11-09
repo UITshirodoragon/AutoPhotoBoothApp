@@ -76,6 +76,9 @@ class ConcreteMediator(IMediator):
             if event == 'clear_image_gallery_label':
                 self.image_capture_presenter.handle_clear_image_gallery_label()
                 
+            if event == 'start_preview_process':
+                self.image_capture_presenter.handle_start_update_preview_image()
+                
         if sender == 'start_presenter' and receiver == 'image_capture_presenter':
             if event == 'stop_preview_process':
                 self.image_capture_presenter.handle_stop_update_preview_image()

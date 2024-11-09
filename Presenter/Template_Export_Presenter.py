@@ -73,6 +73,7 @@ class TemplateExportPresenter:
         self.mediator = mediator    
     
     def handle_back_button_clicked(self) -> None:
+        self.mediator.notify('template_export_presenter', 'image_capture_presenter', 'start_preview_process')
         self.stack_view.setCurrentIndex(2)
         print(self.template_control_model.selected_template_id)
         
