@@ -137,7 +137,7 @@ if __name__ == "__main__":
     elif plf.system() == "Linux":
         
         main_widget = handle_app_show_on_portrait_screen(main_screen, stack_view)
-        main_widget.show()
+        main_widget.showFullScreen()
     sys.exit(app.exec_())
 
 

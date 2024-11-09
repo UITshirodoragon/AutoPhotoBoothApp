@@ -44,6 +44,7 @@ class CameraConfigurationModel:
                 # self.Picamera.preview_configuration.format = "SBGGR10"
                 self.Picamera.preview_configuration.main.size = (1024, 768) # set size for preview
                 self.Picamera.preview_configuration.main.format = "BGR888" # set format color
+                self.Picamera.preview_configuration.controls.FrameRate = 60.0 # set FPS
                 self.Picamera.still_configuration.main.size = (2592,1944)
                 self.Picamera.still_configuration.main.format = "XRGB8888"
                 # self.Picamera.preview_configuration.align() # set align
@@ -103,7 +104,8 @@ class CameraConfigurationModel:
                 frame = self.Picamera.capture_array("main")
                 
                 ##frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
-                frame = cv2.flip(frame, 1)
+                # frame = cv2.flip(frame, 1)
+                # frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
             return frame
         except Exception as error:
             print(f"Error {error}")
