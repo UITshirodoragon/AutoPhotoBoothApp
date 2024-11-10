@@ -24,6 +24,7 @@ from Model.Template_Export_Model import TemplateExportModel
 from Model.User_Model import UserModel, User
 from Model.Template_Model import TemplateModel 
 from Model.Google_Drive_Model import GoogleDriveModel
+from Model.Image_Model import ImageModel
 
 from PyQt5.QtWidgets import QApplication, QStackedWidget, QScrollArea, QMainWindow, QWidget, QVBoxLayout, QScrollArea
 from PyQt5.QtCore import QSize, QRect, Qt
@@ -90,6 +91,7 @@ if __name__ == "__main__":
     image_capture_model = ImageCaptureModel()
     template_export_model = TemplateExportModel()
     google_drive_model = GoogleDriveModel()
+    image_control_model = ImageModel()
     
     start_view = StartView()
     template_menu_view = TemplateMenuView()
@@ -98,17 +100,48 @@ if __name__ == "__main__":
     template_image_preview_view = TemplateImagePreviewView()
     
     
-    start_presenter = StartPresenter(start_model, start_view, stack_view, user_control_model, google_drive_model, app)
+    start_presenter = StartPresenter(start_model, 
+                                     start_view, 
+                                     stack_view, 
+                                     user_control_model, 
+                                     google_drive_model, 
+                                     app,
+                                     image_control_model)
 
-    template_menu_presenter = TemplateMenuPresenter(template_menu_model, template_menu_view, stack_view, user_control_model, template_control_model)
+    template_menu_presenter = TemplateMenuPresenter(template_menu_model, 
+                                                    template_menu_view, 
+                                                    stack_view, 
+                                                    user_control_model, 
+                                                    template_control_model,
+                                                    image_control_model)
     
-    template_export_presenter = TemplateExportPresenter(template_export_model, template_export_view, stack_view, user_control_model, template_control_model, google_drive_model)
+    template_export_presenter = TemplateExportPresenter(template_export_model, 
+                                                        template_export_view, 
+                                                        stack_view, 
+                                                        user_control_model, 
+                                                        template_control_model, 
+                                                        google_drive_model,
+                                                        image_control_model)
     
-    image_capture_presenter = ImageCapturePresenter(image_capture_model,image_capture_view, stack_view, user_control_model, template_control_model)
+    image_capture_presenter = ImageCapturePresenter(image_capture_model,
+                                                    image_capture_view, 
+                                                    stack_view, 
+                                                    user_control_model, 
+                                                    template_control_model,
+                                                    image_control_model)
     
-    template_image_preview_presenter = TemplateImagePreviewPresenter(template_export_model, template_image_preview_view, stack_view, user_control_model, template_control_model)
+    template_image_preview_presenter = TemplateImagePreviewPresenter(template_export_model, 
+                                                                     template_image_preview_view, 
+                                                                     stack_view, 
+                                                                     user_control_model, 
+                                                                     template_control_model,
+                                                                     image_control_model)
     
-    mediator = ConcreteMediator(start_presenter, image_capture_presenter, template_menu_presenter, template_export_presenter, template_image_preview_presenter)
+    mediator = ConcreteMediator(start_presenter, 
+                                image_capture_presenter, 
+                                template_menu_presenter, 
+                                template_export_presenter, 
+                                template_image_preview_presenter)
     
     stack_view.addWidget(start_view)
     stack_view.addWidget(template_menu_view)

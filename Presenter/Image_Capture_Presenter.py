@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import QStackedWidget, QLabel, QHBoxLayout, QGraphicsOpacit
 from Model.Image_Capture_Model import ImageCaptureModel
 from Model.User_Model import UserModel, User
 from Model.Template_Model import TemplateModel
+from Model.Image_Model import ImageModel
 
 from Presenter.Mediator import IMediator, ConcreteMediator
 
@@ -21,15 +22,16 @@ class ImageCapturePresenter:
                  view: ImageCaptureView,
                  stack_view: QStackedWidget,
                  user_control_model: UserModel,
-                template_control_model: TemplateModel
+                template_control_model: TemplateModel,
+                image_control_model: ImageModel
                  ) -> None:
         self.view = view
         self.model = model
         self.stack_view = stack_view
         self.user_control_model = user_control_model
         self.template_control_model = template_control_model
+        self.image_control_model = image_control_model
         self.mediator = None
-        
         
         # Khởi động camera trong model
         # self.model.start_preview_process()
@@ -123,12 +125,15 @@ class ImageCapturePresenter:
             # self.model.number_of_images.put(obj = self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id, 'number_of_images'))
             self.model.capture_image(user_image_gallery_folder_path = self.user_control_model.get_user().gallery_folder_path,
                                      image_captured_count = self.user_control_model.get_user().image_count)
-            
-            
+            # print(self.image_control_model.database_path)
+            self.image_control_model.insert_image_into_database(f"image{self.user_control_model.get_user().image_count}.png",
+                                                                self.user_control_model.get_user().gallery_folder_path + f"/image{self.user_control_model.get_user().image_count}.png",
+                                                                (2592,1944))
             image_gallery_update_timer = QTimer()
             image_gallery_update_timer.singleShot(1000, self.handle_image_gallery_label)
             self.user_control_model.get_user().image_count += 1
-            self.view.update_number_of_captured_images_gui(self.user_control_model.get_user().image_count, self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id, 'number_of_images'))    
+            self.view.update_number_of_captured_images_gui(self.user_control_model.get_user().image_count, 
+                                                           self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id, 'number_of_images'))    
         else:
             print("Out of images in template")
             
@@ -248,6 +253,9 @@ class ImageCapturePresenter:
             if event.button() == Qt.LeftButton:
                 if self.touch_event == "Touch":
                     print(index)
+                    
+                    self.mediator.notify(sender = 'image_capture_presenter', receiver = 'template_image_preview_presenter', event = 'update_raw_image', data = {'selected_image_id': index})
+                    
                     self.stack_view.setCurrentIndex(4)
                     # for label in self.small_image_labels:
                     #     if label.geometry().contains(self.view.image_gallery_container_widget.mapFromParent(event.pos())):

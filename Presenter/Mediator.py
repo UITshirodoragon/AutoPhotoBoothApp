@@ -38,6 +38,8 @@ class TemplateImagePreviewPresenter(Protocol):
     def set_mediator(self, mediator: IMediator) -> None:
         ...
 
+    def handle_update_raw_image(self, selected_image_id) -> None:
+        ...
 
 
 class StartPresenter(Protocol):
@@ -85,3 +87,7 @@ class ConcreteMediator(IMediator):
             
             if event == 'start_preview_process':
                 self.image_capture_presenter.handle_start_update_preview_image()
+                
+        if sender == 'image_capture_presenter' and receiver == 'template_image_preview_presenter':
+            if event == 'update_raw_image':
+                self.template_image_preview_presenter.handle_update_raw_image(data["selected_image_id"])
