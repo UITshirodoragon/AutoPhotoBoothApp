@@ -11,6 +11,7 @@ from Model.Template_Export_Model import TemplateExportModel, TemplateExportWorke
 from Model.User_Model import UserModel, User
 from Model.Template_Model import TemplateModel
 from Model.Google_Drive_Model import GoogleDriveModel
+from Model.Image_Model import ImageModel
 
 from Presenter.Mediator import IMediator, ConcreteMediator
 
@@ -23,13 +24,15 @@ class TemplateExportPresenter:
                  stack_view: QStackedWidget, 
                  user_control_model: UserModel, 
                  template_control_model: TemplateModel,
-                 google_drive_model: GoogleDriveModel) -> None:
+                 google_drive_model: GoogleDriveModel,
+                 image_control_model: ImageModel) -> None:
         self.model = model
         self.view = view
         self.stack_view = stack_view
         self.user_control_model = user_control_model
         self.template_control_model = template_control_model
         self.google_drive_model = google_drive_model
+        self.image_control_model = image_control_model
         self.mediator = None
         
         self.view.TEV_back_button_signal.connect(self.handle_back_button_clicked)
@@ -73,8 +76,10 @@ class TemplateExportPresenter:
         self.mediator = mediator    
     
     def handle_back_button_clicked(self) -> None:
+        self.mediator.notify('template_export_presenter', 'image_capture_presenter', 'start_preview_process')
         self.stack_view.setCurrentIndex(2)
         print(self.template_control_model.selected_template_id)
+        self.is_update_final_template_with_images_finished = False
         
     def handle_restart_button_clicked(self) -> None:
         self.stack_view.setCurrentIndex(0)

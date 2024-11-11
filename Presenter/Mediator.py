@@ -38,7 +38,11 @@ class TemplateImagePreviewPresenter(Protocol):
     def set_mediator(self, mediator: IMediator) -> None:
         ...
 
+    def handle_update_raw_image(self, selected_image_id) -> None:
+        ...
 
+    def handle_update_template_with_a_image(self, selected_image_id) -> None:
+        ...
 
 class StartPresenter(Protocol):
     def set_mediator(self, mediator: IMediator) -> None:
@@ -76,9 +80,19 @@ class ConcreteMediator(IMediator):
             if event == 'clear_image_gallery_label':
                 self.image_capture_presenter.handle_clear_image_gallery_label()
                 
+            if event == 'start_preview_process':
+                self.image_capture_presenter.handle_start_update_preview_image()
+                
         if sender == 'start_presenter' and receiver == 'image_capture_presenter':
             if event == 'stop_preview_process':
                 self.image_capture_presenter.handle_stop_update_preview_image()
             
             if event == 'start_preview_process':
                 self.image_capture_presenter.handle_start_update_preview_image()
+                
+        if sender == 'image_capture_presenter' and receiver == 'template_image_preview_presenter':
+            if event == 'update_raw_image':
+                self.template_image_preview_presenter.handle_update_raw_image(data["selected_image_id"])
+                
+            if event == 'update_template_with_a_image':
+                self.template_image_preview_presenter.handle_update_template_with_a_image(data["selected_image_id"])
