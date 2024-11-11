@@ -75,7 +75,16 @@ class ImageCapturePresenter:
             self.countdown_timer.stop()
             self.time_left = self.countdown_time
             self.view.countdown_number_label.clear()
-            self.handle_capture_button_clicked()
+            self.handle_capture_and_save_and_update_image_gallery()
+            
+            # self.mediator.notify(sender = 'image_capture_presenter', receiver = 'template_image_preview_presenter', event = 'update_raw_image', data = {'selected_image_id': self.user_control_model.get_user().image_count})
+                    
+            self.mediator.notify(sender = 'image_capture_presenter', receiver = 'template_image_preview_presenter', event = 'update_template_with_a_image', data = {'selected_image_id': self.user_control_model.get_user().image_count})
+
+            self.mediator.notify(sender = 'image_capture_presenter', receiver = 'template_image_preview_presenter', event = 'start_preview_countdown')
+            
+            self.stack_view.setCurrentIndex(4)
+            # self.handle_capture_button_clicked()
             # self.view.capture_button.setEnabled(True)  # Enable the button
     
 
@@ -91,24 +100,25 @@ class ImageCapturePresenter:
             self.user_control_model.create_user_image_gallery()
             self.user_control_model.get_user().image_count = 0
             self.handle_clear_image_gallery_label()
+            self.image_control_model.create_table_in_database()
             self.stack_view.setCurrentIndex(1)
         else:
             pass
         
     def handle_next_button_clicked(self) -> None:
         # self.stack_view.setCurrentIndex(3) 
-        if self.user_control_model.get_user().image_count == self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id, 'number_of_images'):
-            self.mediator.notify(sender = 'image_capture_presenter', receiver = 'template_export_presenter', event = 'update_final_template_with_images')
+        # if self.user_control_model.get_user().image_count == self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id, 'number_of_images'):
+        #     self.mediator.notify(sender = 'image_capture_presenter', receiver = 'template_export_presenter', event = 'update_final_template_with_images')
         self.stack_view.setCurrentIndex(3)
-        pass
 
         
     def handle_capture_button_clicked(self) -> None:
-        if self.current_index < self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id, 'number_of_images'):
+        print 
+        if self.user_control_model.get_user().image_count < self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id, 'number_of_images'):
             
             self.handle_start_countdown()
-            image_capture_timer = QTimer()
-            image_capture_timer.singleShot(self.countdown_time * 1000 + 500, self.handle_capture_and_save_and_update_image_gallery)
+            # image_capture_timer = QTimer()
+            # image_capture_timer.singleShot(self.countdown_time * 1000 + 500, self.handle_capture_and_save_and_update_image_gallery)
         
         else:  
             self.view.capture_button.setEnabled(True)
@@ -265,7 +275,7 @@ class ImageCapturePresenter:
                 if self.touch_event == "Touch":
                     print(index)
                     
-                    self.mediator.notify(sender = 'image_capture_presenter', receiver = 'template_image_preview_presenter', event = 'update_raw_image', data = {'selected_image_id': index})
+                    # self.mediator.notify(sender = 'image_capture_presenter', receiver = 'template_image_preview_presenter', event = 'update_raw_image', data = {'selected_image_id': index})
                     
                     self.mediator.notify(sender = 'image_capture_presenter', receiver = 'template_image_preview_presenter', event = 'update_template_with_a_image', data = {'selected_image_id': index})
                     

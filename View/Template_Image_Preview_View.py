@@ -16,6 +16,8 @@ class TemplateImagePreviewView(QWidget, Ui_Template_Image_Preview_View):
     def __init__(self) -> None:
         super().__init__()
         self.setupUi(self)
+        
+        self.hide_preview_countdown_label_gui()
 
         self.restart_capture_button.clicked.connect(self.emit_restart_capture_button_clicked_signal)
         self.confirm_capture_button.clicked.connect(self.emit_confirm_capture_button_clicked_signal)
@@ -45,8 +47,16 @@ class TemplateImagePreviewView(QWidget, Ui_Template_Image_Preview_View):
         scaled_image_with_background_pixmap = image_with_background_pixmap.scaled(500, 500, Qt.KeepAspectRatio)
         self.image_with_background_label.setPixmap(scaled_image_with_background_pixmap)
         
-    def update_image_info_gui(self, image_info: str) -> None:
+    def update_image_info_label_gui(self, image_info: str) -> None:
         self.image_info_label.setText(image_info)
         
-    def update_preview_countdown_gui(self, preview_countdown: str) -> None:
+    def update_preview_countdown_label_gui(self, preview_countdown: str) -> None:
         self.preview_countdown_label.setText(preview_countdown)
+        
+    def show_preview_countdown_label_gui(self) -> None:
+        self.preview_countdown_label.show()
+        
+    def hide_preview_countdown_label_gui(self) -> None:
+        self.preview_countdown_label.hide()
+        
+    

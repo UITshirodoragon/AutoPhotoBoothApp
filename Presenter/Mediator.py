@@ -21,6 +21,8 @@ class ImageCapturePresenter(Protocol):
     def handle_start_update_preview_image(self) -> None:
         ...
     
+    def handle_capture_button_clicked(self) -> None:
+        ...
     
 class TemplateMenuPresenter(Protocol):
     def set_mediator(self, mediator: IMediator) -> None:
@@ -42,6 +44,9 @@ class TemplateImagePreviewPresenter(Protocol):
         ...
 
     def handle_update_template_with_a_image(self, selected_image_id) -> None:
+        ...
+        
+    def handle_start_countdown(self) -> None:
         ...
 
 class StartPresenter(Protocol):
@@ -96,3 +101,10 @@ class ConcreteMediator(IMediator):
                 
             if event == 'update_template_with_a_image':
                 self.template_image_preview_presenter.handle_update_template_with_a_image(data["selected_image_id"])
+            
+            if event == 'start_preview_countdown':
+                self.template_image_preview_presenter.handle_start_countdown()
+                
+        if sender == 'template_image_preview_presenter' and receiver == 'image_capture_presenter':
+            if event == 'start_capture_countdown':
+                self.image_capture_presenter.handle_capture_button_clicked()

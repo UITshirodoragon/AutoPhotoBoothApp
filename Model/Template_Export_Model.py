@@ -84,7 +84,7 @@ class TemplateExportWorker(QThread):
     def run(self):
         self.template_export_model.export_template_with_images(self.template, self.user, self.TEW_progress_signal.emit, self.TEW_finished_signal.emit)
         current_time = datetime.datetime.now()
-        template_drive_file_id = self.GoogleDriveModel.Upload(f'final_user_{self.user.id}_{current_time.strftime('%d%m%Y_%H%M%S')}.png', self.user.gallery_folder_path + f'/final_user_{self.user.id}.png', 'cloud_drive_folder')
+        template_drive_file_id = self.GoogleDriveModel.Upload(f"final_user_{self.user.id}_{current_time.strftime('%d%m%Y_%H%M%S')}.png", self.user.gallery_folder_path + f'/final_user_{self.user.id}.png', 'cloud_drive_folder')
         self.TEW_progress_signal.emit(80)
         
         self.GoogleDriveModel.make_file_public(template_drive_file_id)
