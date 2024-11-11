@@ -53,4 +53,5 @@ class TemplateImagePreviewPresenter:
     def handle_update_raw_image(self, selected_image_id: int) -> None:
         self.view.update_raw_image_gui(self.image_control_model.get_image_with_field_from_database(selected_image_id, "path"))
         
-    
+    def handle_update_template_with_a_image(self, selected_image_id: int) -> None:
+        self.view.update_preview_template_gui(self.image_control_model.get_image_with_field_from_database(selected_image_id, "template_with_image_path"))

@@ -79,6 +79,7 @@ class TemplateExportPresenter:
         self.mediator.notify('template_export_presenter', 'image_capture_presenter', 'start_preview_process')
         self.stack_view.setCurrentIndex(2)
         print(self.template_control_model.selected_template_id)
+        self.is_update_final_template_with_images_finished = False
         
     def handle_restart_button_clicked(self) -> None:
         self.stack_view.setCurrentIndex(0)

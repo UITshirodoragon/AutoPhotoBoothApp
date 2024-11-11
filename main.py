@@ -128,7 +128,8 @@ if __name__ == "__main__":
                                                     stack_view, 
                                                     user_control_model, 
                                                     template_control_model,
-                                                    image_control_model)
+                                                    image_control_model,
+                                                    template_export_model)
     
     template_image_preview_presenter = TemplateImagePreviewPresenter(template_export_model, 
                                                                      template_image_preview_view, 

@@ -8,7 +8,7 @@ from Model.User_Model import User
 import json
 import time
 from PyQt5.QtCore import pyqtSignal, QThread
-
+import datetime
 
 
 class TemplateExportModel(): 
@@ -16,8 +16,11 @@ class TemplateExportModel():
         
         pass
     
-    def export_template_with_images(self, template: dict, user: User , progress_emit_signal_function = None, finished_emit_signal_function = None) -> None:
-        value: int = 0
+    def export_template_with_images(self, template: dict, 
+                                    user: User , 
+                                    progress_emit_signal_function = None, 
+                                    finished_emit_signal_function = None
+                                    ) -> None:
         img_index = 0
        
         background = Image.open(template['path'])
@@ -43,7 +46,19 @@ class TemplateExportModel():
         # if finished_emit_signal_function is not None:
         #     finished_emit_signal_function()
         
+    def export_template_with_a_image(self, template: dict, 
+                                     image: dict, 
+                                     progress_emit_signal_function = None, 
+                                     finished_emit_signal_function = None
+                                     ) -> None:
+        background = Image.open(template['path'])
+        img_pos_list = json.loads(template['image_positions_list'])
         
+        print(f"add image {image['path']} to template {template['path']}")
+        
+        img = Image.open(image['path']).resize(tuple(json.loads(template['image_size'])))
+        background.paste(img, tuple(img_pos_list[image['id'] - 1]))   # change list to tuple
+        background.save(image['template_with_image_path'])
         
 class TemplateExportWorker(QThread):
     TEW_progress_signal = pyqtSignal(int)
@@ -68,8 +83,8 @@ class TemplateExportWorker(QThread):
         
     def run(self):
         self.template_export_model.export_template_with_images(self.template, self.user, self.TEW_progress_signal.emit, self.TEW_finished_signal.emit)
-        
-        template_drive_file_id = self.GoogleDriveModel.Upload(f'final_user_{self.user.id}.png', self.user.gallery_folder_path + f'/final_user_{self.user.id}.png', 'cloud_drive_folder')
+        current_time = datetime.datetime.now()
+        template_drive_file_id = self.GoogleDriveModel.Upload(f'final_user_{self.user.id}_{current_time.strftime('%d%m%Y_%H%M%S')}.png', self.user.gallery_folder_path + f'/final_user_{self.user.id}.png', 'cloud_drive_folder')
         self.TEW_progress_signal.emit(80)
         
         self.GoogleDriveModel.make_file_public(template_drive_file_id)

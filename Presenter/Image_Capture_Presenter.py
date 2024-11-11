@@ -8,6 +8,7 @@ from Model.Image_Capture_Model import ImageCaptureModel
 from Model.User_Model import UserModel, User
 from Model.Template_Model import TemplateModel
 from Model.Image_Model import ImageModel
+from Model.Template_Export_Model import TemplateExportModel
 
 from Presenter.Mediator import IMediator, ConcreteMediator
 
@@ -23,7 +24,8 @@ class ImageCapturePresenter:
                  stack_view: QStackedWidget,
                  user_control_model: UserModel,
                 template_control_model: TemplateModel,
-                image_control_model: ImageModel
+                image_control_model: ImageModel,
+                template_export_model: TemplateExportModel
                  ) -> None:
         self.view = view
         self.model = model
@@ -31,6 +33,7 @@ class ImageCapturePresenter:
         self.user_control_model = user_control_model
         self.template_control_model = template_control_model
         self.image_control_model = image_control_model
+        self.template_export_model = template_export_model
         self.mediator = None
         
         # Khởi động camera trong model
@@ -128,7 +131,15 @@ class ImageCapturePresenter:
             # print(self.image_control_model.database_path)
             self.image_control_model.insert_image_into_database(f"image{self.user_control_model.get_user().image_count}.png",
                                                                 self.user_control_model.get_user().gallery_folder_path + f"/image{self.user_control_model.get_user().image_count}.png",
-                                                                (2592,1944))
+                                                                (2592,1944),
+                                                                self.user_control_model.get_user().gallery_folder_path + f"/template_with_image{self.user_control_model.get_user().image_count}.png"
+                                                                )
+            
+            self.template_export_model.export_template_with_a_image(self.template_control_model.get_template_from_database(self.template_control_model.selected_template_id),
+                                                                    self.image_control_model.get_image_from_database(self.user_control_model.get_user().image_count + 1),
+                                                                    None,
+                                                                    None)
+            
             image_gallery_update_timer = QTimer()
             image_gallery_update_timer.singleShot(1000, self.handle_image_gallery_label)
             self.user_control_model.get_user().image_count += 1
@@ -255,6 +266,8 @@ class ImageCapturePresenter:
                     print(index)
                     
                     self.mediator.notify(sender = 'image_capture_presenter', receiver = 'template_image_preview_presenter', event = 'update_raw_image', data = {'selected_image_id': index})
+                    
+                    self.mediator.notify(sender = 'image_capture_presenter', receiver = 'template_image_preview_presenter', event = 'update_template_with_a_image', data = {'selected_image_id': index})
                     
                     self.stack_view.setCurrentIndex(4)
                     # for label in self.small_image_labels:
