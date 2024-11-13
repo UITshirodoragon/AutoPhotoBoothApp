@@ -6,6 +6,7 @@ from PyQt5.QtCore import pyqtSignal, Qt
 from PyQt5.QtGui import QIcon, QImage, QPixmap
 
 from View.ui_Template_Image_Preview_View import Ui_Template_Image_Preview_View
+from View.Alert_Box_View import AlertBoxView
 
 class TemplateImagePreviewView(QWidget, Ui_Template_Image_Preview_View):
     TIPV_restart_capture_button_clicked_signal = pyqtSignal()
@@ -59,4 +60,10 @@ class TemplateImagePreviewView(QWidget, Ui_Template_Image_Preview_View):
     def hide_preview_countdown_label_gui(self) -> None:
         self.preview_countdown_label.hide()
         
-    
+    def show_dialog_alert_to_restart_capture(self) -> None:
+        alert_go_back_box = AlertBoxView(self)
+        alert_go_back_box.setGeometry(340, 860, 400, 200)
+        alert_go_back_box.set_alert_title_label("Restart Capture")
+        alert_go_back_box.set_alert_content_label("Are you sure you want to restart the capture?")
+        reply = alert_go_back_box.exec_()
+        return reply

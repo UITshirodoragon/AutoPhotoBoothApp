@@ -86,9 +86,9 @@ class ImageCaptureModel:
         #         print("Out of images in template")
         return frame
        
-    def capture_image(self, user_image_gallery_folder_path: str, image_captured_count: int) -> None:
+    def capture_image(self, user_image_gallery_folder_path: str, image_captured_count: int, index_of_image: int = None) -> None:
         self.camera.captured_and_saved_images_count = image_captured_count
-        self.camera.capture_and_save_image(user_image_gallery_folder_path)
+        self.camera.capture_and_save_image(user_image_gallery_folder_path, index_of_image)
                     
     def get_frame(self) -> MatLike:
         return self.preview_update_frame_process()

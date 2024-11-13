@@ -23,6 +23,9 @@ class ImageCapturePresenter(Protocol):
     
     def handle_capture_button_clicked(self) -> None:
         ...
+        
+    def handle_delete_image_in_gallery(self, index_of_image: int) -> None:
+        ...
     
 class TemplateMenuPresenter(Protocol):
     def set_mediator(self, mediator: IMediator) -> None:
@@ -108,3 +111,6 @@ class ConcreteMediator(IMediator):
         if sender == 'template_image_preview_presenter' and receiver == 'image_capture_presenter':
             if event == 'start_capture_countdown':
                 self.image_capture_presenter.handle_capture_button_clicked()
+                
+            if event == 'restart_capture_image':
+                self.image_capture_presenter.handle_delete_image_in_gallery(data["deleted_image_id"])
