@@ -53,7 +53,37 @@ class ImageModel:
         
         conn.commit()
         conn.close()
-
+        
+    def insert_image_into_database_with_id(self, id: int,
+                                             name: str,
+                                             path: str,
+                                                size: tuple,
+                                                template_with_image_path: str) -> None:
+        conn = sqlite3.connect(self.database_path)
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+        INSERT INTO images 
+        (
+            id,
+            name, 
+            path, 
+            size,
+            template_with_image_path
+        )
+        VALUES (?, ?, ?, ?, ?)
+        ''', (
+            id,
+            name, 
+            path, 
+            json.dumps(size),
+            template_with_image_path
+              )
+        )
+        
+        conn.commit()
+        conn.close()
+        
     def get_image_from_database(self, id) -> dict:
         conn = sqlite3.connect(self.database_path)
         cursor = conn.cursor()

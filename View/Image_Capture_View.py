@@ -7,7 +7,7 @@ from typing import Protocol
 from cv2.typing import MatLike
 
 from View.ui_Image_Capture_View import Ui_Image_Capture_View
-
+from View.Alert_Box_View import AlertBoxView
 
 
 class ImageCaptureView(QWidget, Ui_Image_Capture_View ):
@@ -95,46 +95,48 @@ class ImageCaptureView(QWidget, Ui_Image_Capture_View ):
         self.capture_button.setEnabled(True)
     
     def show_dialog_alert_to_clear_image_gallery(self):
-        alert_go_back_box = QMessageBox(self)
-        alert_go_back_box.setWindowTitle('ALERT!')
+        # alert_go_back_box = QMessageBox(self)
+        # alert_go_back_box.setWindowTitle('ALERT!')
         
-        alert_go_back_box.setText('Your images will be deleted.\nAre you sure to go to the Template Menu?')
-        alert_go_back_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-        alert_go_back_box.setDefaultButton(QMessageBox.No)
-        yes_button = alert_go_back_box.button(QMessageBox.Yes)
-        no_button = alert_go_back_box.button(QMessageBox.No)
-        yes_button.setObjectName("Yes")
-        no_button.setObjectName("No")
+        # alert_go_back_box.setText('Your images will be deleted.\nAre you sure to go to the Template Menu?')
+        # alert_go_back_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        # alert_go_back_box.setDefaultButton(QMessageBox.No)
+        # yes_button = alert_go_back_box.button(QMessageBox.Yes)
+        # no_button = alert_go_back_box.button(QMessageBox.No)
+        # yes_button.setObjectName("Yes")
+        # no_button.setObjectName("No")
 
-        alert_go_back_box.setStyleSheet("""
+        # alert_go_back_box.setStyleSheet("""
         
-        QPushButton {
-            color: white;
-            border-radius: 5px;
-            padding: 20px 40px; /* Increase padding for larger buttons */
-            font-size: 30px;    /* Increase font size */
-        }
-        QPushButton#No {
-            background-color: green;
-        }
-        QPushButton#No:hover {
-            background-color: darkgreen;
-        }
-        QPushButton#Yes {
-            background-color: red;
-        }
-        QPushButton#Yes:hover {
-            background-color: darkred;
-        }
-        QLabel {
-            color: red;
-            font-size: 25px;
-        }
-        """)
+        # QPushButton {
+        #     color: white;
+        #     border-radius: 5px;
+        #     padding: 20px 40px; /* Increase padding for larger buttons */
+        #     font-size: 30px;    /* Increase font size */
+        # }
+        # QPushButton#No {
+        #     background-color: green;
+        # }
+        # QPushButton#No:hover {
+        #     background-color: darkgreen;
+        # }
+        # QPushButton#Yes {
+        #     background-color: red;
+        # }
+        # QPushButton#Yes:hover {
+        #     background-color: darkred;
+        # }
+        # QLabel {
+        #     color: red;
+        #     font-size: 25px;
+        # }
+        # """)
 
-        reply = alert_go_back_box.exec()
+        alert_go_back_box = AlertBoxView(self)
+        alert_go_back_box.setGeometry(340, 860, 400, 200)
+        alert_go_back_box.set_alert_title_label('ALERT!')
+        alert_go_back_box.set_alert_content_label('Your images will be deleted.\nAre you sure to go to the Template Menu?')
+        
+        reply = alert_go_back_box.exec_()
 
-        if reply == QMessageBox.Yes:
-            return True
-        else:
-            return False
+        return reply

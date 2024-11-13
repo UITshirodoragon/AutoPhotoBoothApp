@@ -110,8 +110,13 @@ class CameraConfigurationModel:
         except Exception as error:
             print(f"Error {error}")
             
-    def capture_and_save_image(self, user_image_gallery_folder_path):
-        self.just_captured_image_path = user_image_gallery_folder_path + f"/image{self.captured_and_saved_images_count}.png"
+    def capture_and_save_image(self, user_image_gallery_folder_path, index_of_image: int = None):
+        if index_of_image is None:
+            
+            self.just_captured_image_path = user_image_gallery_folder_path + f"/image{self.captured_and_saved_images_count}.png"
+        else:
+            self.just_captured_image_path = user_image_gallery_folder_path + f"/image{index_of_image}.png"
+        
         try:
             
             if plf.system() == 'Windows':
