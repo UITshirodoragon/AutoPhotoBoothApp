@@ -1,6 +1,9 @@
 import os
 import shutil
 import time
+
+from Model.Image_Model import ImageModel
+
 class User:
     
     def __init__(self):
@@ -10,6 +13,8 @@ class User:
         self.is_working = True
         self.gallery_folder_path = None
         self.image_count = 0
+        self.image_database_path = None
+ 
         
     def delete(self):
         del self
@@ -83,6 +88,9 @@ class UserModel:
             shutil.rmtree(self.folder_name)
         os.makedirs(self.folder_name, exist_ok=True)  # Tạo thư mục
         self.current_user.gallery_folder_path = self.folder_name.replace('\\','/')
+        
+        self.current_user.image_database_path = self.current_user.gallery_folder_path + f"/user_{self.current_user.id}_image.db"
+        
         print(f"Create folder: {self.folder_name}")
         
     def delete_user_image_gallery(self, user: User):

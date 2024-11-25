@@ -15,18 +15,22 @@ from Presenter.Mediator import IMediator, ConcreteMediator
 from Model.Template_Menu_Model import TemplateMenuModel
 from Model.User_Model import UserModel, User
 from Model.Template_Model import TemplateModel
+from Model.Image_Model import ImageModel
 
 class TemplateMenuPresenter:
     def __init__(self, model: TemplateMenuModel, 
                  view: TemplateMenuView, 
                  stack_view: QStackedWidget, 
                  user_control_model: UserModel,
-                 template_control_model: TemplateModel
+                 template_control_model: TemplateModel,
+                 image_control_model: ImageModel
                  ) -> None:
         self.model = model
         self.view = view
         self.stack_view = stack_view
         self.template_control_model = template_control_model
+        self.user_control_model = user_control_model
+        self.image_control_model = image_control_model
         self.mediator = None
         
         self.current_index = 1

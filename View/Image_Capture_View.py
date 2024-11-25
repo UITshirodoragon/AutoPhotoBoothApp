@@ -1,19 +1,20 @@
 from __future__ import annotations
-from PyQt5.QtWidgets import QLabel, QVBoxLayout, QWidget, QMainWindow, QPushButton, QHBoxLayout, QSizePolicy, QFrame, QGraphicsOpacityEffect
+from PyQt5.QtWidgets import QLabel, QVBoxLayout, QWidget, QMainWindow, QPushButton, QHBoxLayout, QSizePolicy, QFrame, QGraphicsOpacityEffect, QMessageBox
 from PyQt5.QtCore import pyqtSignal, Qt, QSize, QRect, QPropertyAnimation, QTimer, QSequentialAnimationGroup
-from PyQt5.QtGui import QPixmap, QImage, QIcon, QPalette
+from PyQt5.QtGui import QPixmap, QImage, QIcon, QPalette, QColor
 from PyQt5.uic import loadUi
 from typing import Protocol
 from cv2.typing import MatLike
 
 from View.ui_Image_Capture_View import Ui_Image_Capture_View
-
+from View.Alert_Box_View import AlertBoxView
 
 
 class ImageCaptureView(QWidget, Ui_Image_Capture_View ):
     ICV_back_button_signal = pyqtSignal()
     ICV_next_button_signal = pyqtSignal()
     ICV_capture_button_signal = pyqtSignal()
+    ICV_export_template_button_clicked_signal = pyqtSignal()
     
     def __init__(self) -> None:
         super().__init__()
@@ -29,6 +30,17 @@ class ImageCaptureView(QWidget, Ui_Image_Capture_View ):
         self.next_button.clicked.connect(self.emit_next_button_clicked_signal)
         self.capture_button.clicked.connect(self.emit_capture_button_clicked_signal)
 
+        self.next_button.hide()
+        
+        self.export_template_button = QPushButton(self)
+        self.export_template_button.setGeometry(25,1595,200,50)
+        self.export_template_button.setText("Export Template")
+        self.export_template_button.clicked.connect(self.emit_export_template_button_clicked_signal)
+        
+        self.export_template_button.hide()
+        
+        
+        
     #slot
     def emit_back_button_clicked_signal(self) -> None:
         self.ICV_back_button_signal.emit()
@@ -38,6 +50,9 @@ class ImageCaptureView(QWidget, Ui_Image_Capture_View ):
         
     def emit_capture_button_clicked_signal(self) -> None:
         self.ICV_capture_button_signal.emit() 
+        
+    def emit_export_template_button_clicked_signal(self) -> None:
+        self.ICV_export_template_button_clicked_signal.emit()
         
 
     def update_preview_image_gui(self, frame: MatLike) -> None:
@@ -93,3 +108,58 @@ class ImageCaptureView(QWidget, Ui_Image_Capture_View ):
     def clear_countdown_number_label_gui(self):
         self.countdown_number_label.clear()
         self.capture_button.setEnabled(True)
+        
+    def show_export_tempate_button(self):
+        self.export_template_button.show()
+        
+        
+    def hide_export_tempate_button(self):
+        self.export_template_button.hide()
+    
+    
+    def show_dialog_alert_to_clear_image_gallery(self):
+        # alert_go_back_box = QMessageBox(self)
+        # alert_go_back_box.setWindowTitle('ALERT!')
+        
+        # alert_go_back_box.setText('Your images will be deleted.\nAre you sure to go to the Template Menu?')
+        # alert_go_back_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        # alert_go_back_box.setDefaultButton(QMessageBox.No)
+        # yes_button = alert_go_back_box.button(QMessageBox.Yes)
+        # no_button = alert_go_back_box.button(QMessageBox.No)
+        # yes_button.setObjectName("Yes")
+        # no_button.setObjectName("No")
+
+        # alert_go_back_box.setStyleSheet("""
+        
+        # QPushButton {
+        #     color: white;
+        #     border-radius: 5px;
+        #     padding: 20px 40px; /* Increase padding for larger buttons */
+        #     font-size: 30px;    /* Increase font size */
+        # }
+        # QPushButton#No {
+        #     background-color: green;
+        # }
+        # QPushButton#No:hover {
+        #     background-color: darkgreen;
+        # }
+        # QPushButton#Yes {
+        #     background-color: red;
+        # }
+        # QPushButton#Yes:hover {
+        #     background-color: darkred;
+        # }
+        # QLabel {
+        #     color: red;
+        #     font-size: 25px;
+        # }
+        # """)
+
+        alert_go_back_box = AlertBoxView(self)
+        alert_go_back_box.setGeometry(340, 860, 400, 200)
+        alert_go_back_box.set_alert_title_label('ALERT!')
+        alert_go_back_box.set_alert_content_label('Your images will be deleted.\nAre you sure to go to the Template Menu?')
+        
+        reply = alert_go_back_box.exec_()
+
+        return reply

@@ -44,6 +44,7 @@ class CameraConfigurationModel:
                 # self.Picamera.preview_configuration.format = "SBGGR10"
                 self.Picamera.preview_configuration.main.size = (1024, 768) # set size for preview
                 self.Picamera.preview_configuration.main.format = "BGR888" # set format color
+                self.Picamera.preview_configuration.controls.FrameRate = 60.0 # set FPS
                 self.Picamera.still_configuration.main.size = (2592,1944)
                 self.Picamera.still_configuration.main.format = "XRGB8888"
                 # self.Picamera.preview_configuration.align() # set align
@@ -98,18 +99,24 @@ class CameraConfigurationModel:
                 ret, frame = self.camera.read()
                 if ret:
                     frame = cv2.flip(frame, 1)
-                    return frame
+                    
             if plf.system() == "Linux":
                 frame = self.Picamera.capture_array("main")
                 
                 ##frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
-                frame = cv2.flip(frame, 1)
-        
+                # frame = cv2.flip(frame, 1)
+                # frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
+            return frame
         except Exception as error:
             print(f"Error {error}")
             
-    def capture_and_save_image(self, user_image_gallery_folder_path):
-        self.just_captured_image_path = user_image_gallery_folder_path + f"/image{self.captured_and_saved_images_count}.png"
+    def capture_and_save_image(self, user_image_gallery_folder_path, index_of_image: int = None):
+        if index_of_image is None:
+            
+            self.just_captured_image_path = user_image_gallery_folder_path + f"/image{self.captured_and_saved_images_count}.png"
+        else:
+            self.just_captured_image_path = user_image_gallery_folder_path + f"/image{index_of_image}.png"
+        
         try:
             
             if plf.system() == 'Windows':

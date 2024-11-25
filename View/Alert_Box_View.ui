@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AlertBoxView</class>
+ <widget class="QWidget" name="AlertBoxView">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>200</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
+  <widget class="QWidget" name="alert_box_container_widget" native="true">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>400</width>
+     <height>200</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(240, 240, 240);</string>
+   </property>
+   <widget class="QPushButton" name="yes_button">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>125</y>
+      <width>170</width>
+      <height>50</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>YES</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="no_button">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>125</y>
+      <width>170</width>
+      <height>50</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>NO</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="alert_title_label">
+    <property name="geometry">
+     <rect>
+      <x>25</x>
+      <y>25</y>
+      <width>350</width>
+      <height>50</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>ALERT TITLE</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="alert_content_label">
+    <property name="geometry">
+     <rect>
+      <x>25</x>
+      <y>75</y>
+      <width>350</width>
+      <height>50</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Content of alert</string>
+    </property>
+    <property name="textFormat">
+     <enum>Qt::TextFormat::MarkdownText</enum>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
+    </property>
+    <property name="wordWrap">
+     <bool>true</bool>
+    </property>
+    <property name="indent">
+     <number>-1</number>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
