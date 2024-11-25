@@ -43,7 +43,8 @@ class TemplateExportView(QWidget, Ui_TemplateExportView):
     def emit_restart_button_clicked_signal(self) -> None:
         self.TEV_restart_button_signal.emit()
         
-
+    def update_scan_text_label_gui(self, text: str) -> None:
+        self.scan_text_label.setText(text)
         
     def update_final_template_with_images_gui(self, user_final_template_path) -> None:
         template_pixmap = QPixmap(user_final_template_path)

@@ -14,6 +14,7 @@ class ImageCaptureView(QWidget, Ui_Image_Capture_View ):
     ICV_back_button_signal = pyqtSignal()
     ICV_next_button_signal = pyqtSignal()
     ICV_capture_button_signal = pyqtSignal()
+    ICV_export_template_button_clicked_signal = pyqtSignal()
     
     def __init__(self) -> None:
         super().__init__()
@@ -29,6 +30,17 @@ class ImageCaptureView(QWidget, Ui_Image_Capture_View ):
         self.next_button.clicked.connect(self.emit_next_button_clicked_signal)
         self.capture_button.clicked.connect(self.emit_capture_button_clicked_signal)
 
+        self.next_button.hide()
+        
+        self.export_template_button = QPushButton(self)
+        self.export_template_button.setGeometry(25,1595,200,50)
+        self.export_template_button.setText("Export Template")
+        self.export_template_button.clicked.connect(self.emit_export_template_button_clicked_signal)
+        
+        self.export_template_button.hide()
+        
+        
+        
     #slot
     def emit_back_button_clicked_signal(self) -> None:
         self.ICV_back_button_signal.emit()
@@ -38,6 +50,9 @@ class ImageCaptureView(QWidget, Ui_Image_Capture_View ):
         
     def emit_capture_button_clicked_signal(self) -> None:
         self.ICV_capture_button_signal.emit() 
+        
+    def emit_export_template_button_clicked_signal(self) -> None:
+        self.ICV_export_template_button_clicked_signal.emit()
         
 
     def update_preview_image_gui(self, frame: MatLike) -> None:
@@ -93,6 +108,14 @@ class ImageCaptureView(QWidget, Ui_Image_Capture_View ):
     def clear_countdown_number_label_gui(self):
         self.countdown_number_label.clear()
         self.capture_button.setEnabled(True)
+        
+    def show_export_tempate_button(self):
+        self.export_template_button.show()
+        
+        
+    def hide_export_tempate_button(self):
+        self.export_template_button.hide()
+    
     
     def show_dialog_alert_to_clear_image_gallery(self):
         # alert_go_back_box = QMessageBox(self)

@@ -41,6 +41,9 @@ class TemplateImagePreviewPresenter:
             self.view.TIPV_restart_capture_button_clicked_signal.connect(self.handle_restart_capture_button_clicked)
             self.view.TIPV_confirm_capture_button_clicked_signal.connect(self.handle_confirm_capture_button_clicked)
             
+            self.view.export_template_button.hide()
+            
+            
     def handle_start_countdown(self):
         self.view.show_preview_countdown_label_gui()
         self.countdown_timer = QTimer()

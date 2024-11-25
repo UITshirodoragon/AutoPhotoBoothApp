@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Protocol
 
 from PyQt5.QtWidgets import QStackedWidget, QWidget, QVBoxLayout, QScrollArea, QLabel, QPushButton, QProgressBar
-from PyQt5.QtCore import pyqtSignal, QThread
+from PyQt5.QtCore import pyqtSignal, QThread, QTimer, QTime 
 
 
 from View.Template_Export_View import TemplateExportView
@@ -42,7 +42,30 @@ class TemplateExportPresenter:
         
         self.is_update_final_template_with_images_finished = False
         
+        self.minute = 1
+        self.second = 30
+        self.qr_code_countdown_initial_time = QTime(0, self.minute, self.second)
+        self.qr_code_countdown_time = QTime(0, self.minute, self.second)
+        
+        self.qr_code_countdown_timer = QTimer()
+        self.qr_code_countdown_timer.timeout.connect(self.handle_udpate_qr_code_countdown_timer)
+        
         # self.template_export_worker.finished.connect(self.handle_finish_template_export_worker)
+        
+        
+    def handle_start_qr_code_countdown_timer(self) -> None:
+        self.qr_code_countdown_timer.start(1000)
+        
+    def handle_reset_qr_code_countdown_timer(self) -> None:
+        self.qr_code_countdown_time = QTime(0, self.minute, self.second)
+        self.view.update_scan_text_label_gui('Scanning QR code to download in: '+ self.qr_code_countdown_time.toString('mm:ss'))
+      
+    def handle_udpate_qr_code_countdown_timer(self) -> None:
+        self.qr_code_countdown_time = self.qr_code_countdown_time.addSecs(-1)
+        self.view.update_scan_text_label_gui('Scanning QR code to download in: '+ self.qr_code_countdown_time.toString('mm:ss'))
+        if self.qr_code_countdown_time == QTime(0, 0, 0):
+            self.handle_restart_button_clicked()
+        
         
         
     def handle_start_template_export_worker(self) -> None:
@@ -66,6 +89,8 @@ class TemplateExportPresenter:
     def handle_finish_template_export_worker(self) -> None:
         print('finish')
         if not self.is_update_final_template_with_images_finished:
+            self.handle_reset_qr_code_countdown_timer()
+            self.handle_start_qr_code_countdown_timer()
             self.is_update_final_template_with_images_finished = True
             self.template_export_worker.quit()
             self.view.show_all_widgets()
@@ -76,12 +101,17 @@ class TemplateExportPresenter:
         self.mediator = mediator    
     
     def handle_back_button_clicked(self) -> None:
+        self.qr_code_countdown_timer.stop()
+        self.handle_reset_qr_code_countdown_timer()
+        self.qr_code_countdown_timer.stop()
         self.mediator.notify('template_export_presenter', 'image_capture_presenter', 'start_preview_process')
         self.stack_view.setCurrentIndex(2)
         print(self.template_control_model.selected_template_id)
         self.is_update_final_template_with_images_finished = False
         
     def handle_restart_button_clicked(self) -> None:
+        self.qr_code_countdown_timer.stop()
+        self.handle_reset_qr_code_countdown_timer()
         self.stack_view.setCurrentIndex(0)
         self.user_control_model.delete_user()
         self.user_control_model.disable_user()
