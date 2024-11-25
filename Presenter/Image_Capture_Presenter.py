@@ -38,7 +38,7 @@ class ImageCapturePresenter:
         
         # Khởi động camera trong model
         # self.model.start_preview_process()
-        
+        self.is_image_gallery_change = False
         
         self.current_index = 1
         self.small_image_labels: list[QLabel] = []
@@ -61,6 +61,8 @@ class ImageCapturePresenter:
         self.view.ICV_back_button_signal.connect(self.handle_back_button_clicked)
         self.view.ICV_next_button_signal.connect(self.handle_next_button_clicked)
         self.view.ICV_capture_button_signal.connect(self.handle_capture_button_clicked)
+        self.view.ICV_export_template_button_clicked_signal.connect(self.handle_export_template_button_clicked)
+
 
     def handle_start_countdown(self):
         self.countdown_timer = QTimer()
@@ -118,19 +120,32 @@ class ImageCapturePresenter:
         if self.user_control_model.get_user().image_count == self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id, 'number_of_images'):
             self.mediator.notify(sender = 'image_capture_presenter', receiver = 'template_export_presenter', event = 'update_final_template_with_images')
         self.stack_view.setCurrentIndex(3)
+        
+    def handle_export_template_button_clicked(self) -> None:
+        # self.stack_view.setCurrentIndex(3) 
+        self.frame_update_timer.stop()
+        
+        if self.user_control_model.get_user().image_count == self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id, 'number_of_images') and self.is_image_gallery_change:
+            self.mediator.notify(sender = 'image_capture_presenter', receiver = 'template_export_presenter', event = 'update_final_template_with_images')
+            self.is_image_gallery_change = False
+        else:
+            self.mediator.notify(sender = 'image_capture_presenter', receiver = 'template_export_presenter', event = 'start_qr_code_countdown_timer')
+        self.stack_view.setCurrentIndex(3)
+        
 
         
     def handle_capture_button_clicked(self) -> None:
-        print 
+        
         if self.user_control_model.get_user().image_count < self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id, 'number_of_images'):
             
             self.handle_start_countdown()
+            self.is_image_gallery_change = True
             # image_capture_timer = QTimer()
             # image_capture_timer.singleShot(self.countdown_time * 1000 + 500, self.handle_capture_and_save_and_update_image_gallery)
         
         else:  
             self.view.capture_button.setEnabled(True)
-            
+            self.view.show_export_tempate_button()
             # self.frame_update_timer.stop()
             
             # self.stack_view.setCurrentIndex(3)
@@ -218,6 +233,7 @@ class ImageCapturePresenter:
     def handle_clear_image_gallery_label(self):
         self.current_index = 1
         self.small_image_labels = []
+        self.view.hide_export_tempate_button()
         # Xóa tất cả các widget trong layout
         while self.view.image_gallery_container_layout.count():
             item = self.view.image_gallery_container_layout.takeAt(0)
@@ -235,6 +251,9 @@ class ImageCapturePresenter:
         
         # self.view.capture_button.setEnabled(True)
         self.deleted_image_indexes.append(index_of_image)
+        
+        self.view.hide_export_tempate_button()
+        
         
         
     def hanđle_restart_capture_and_save_and_update_image_gallery(self, index_of_image: int):
