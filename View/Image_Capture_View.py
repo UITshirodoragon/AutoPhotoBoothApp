@@ -1,7 +1,7 @@
 from __future__ import annotations
 from PyQt5.QtWidgets import QLabel, QVBoxLayout, QWidget, QMainWindow, QPushButton, QHBoxLayout, QSizePolicy, QFrame, QGraphicsOpacityEffect, QMessageBox
 from PyQt5.QtCore import pyqtSignal, Qt, QSize, QRect, QPropertyAnimation, QTimer, QSequentialAnimationGroup
-from PyQt5.QtGui import QPixmap, QImage, QIcon, QPalette, QColor
+from PyQt5.QtGui import QPixmap, QImage, QIcon, QPalette, QColor, QMovie
 from PyQt5.uic import loadUi
 from typing import Protocol
 from cv2.typing import MatLike
@@ -15,6 +15,7 @@ class ImageCaptureView(QWidget, Ui_Image_Capture_View ):
     ICV_next_button_signal = pyqtSignal()
     ICV_capture_button_signal = pyqtSignal()
     ICV_export_template_button_clicked_signal = pyqtSignal()
+    ICV_remove_background_button_clicked_signal = pyqtSignal()
     
     def __init__(self) -> None:
         super().__init__()
@@ -36,10 +37,24 @@ class ImageCaptureView(QWidget, Ui_Image_Capture_View ):
         self.export_template_button.setGeometry(25,1595,200,50)
         self.export_template_button.setText("Export Template")
         self.export_template_button.clicked.connect(self.emit_export_template_button_clicked_signal)
-        
         self.export_template_button.hide()
         
         
+        self.remove_background_button = QPushButton(self)
+        self.remove_background_button.setGeometry(250,1595,200,50)
+        self.remove_background_button.setCheckable(True)
+        self.remove_background_button.clicked.connect(self.emit_remove_background_button_clicked_signal)
+        self.remove_background_button.setText("Remove Background")
+        self.remove_background_button.hide()
+        
+        self.loading_remove_background_label = QLabel(self)
+        self.loading_remove_background_label.setGeometry(250,1595,50,50)
+        self.loading_remove_background_label.hide()
+        
+        self.loading_remove_background_gif = QMovie("View/Gif/loading.gif")
+        self.loading_remove_background_gif.setScaledSize(QSize(50,50))
+        self.loading_remove_background_label.setMovie(self.loading_remove_background_gif)
+        self.loading_remove_background_label.setAlignment(Qt.AlignCenter)
         
     #slot
     def emit_back_button_clicked_signal(self) -> None:
@@ -54,6 +69,24 @@ class ImageCaptureView(QWidget, Ui_Image_Capture_View ):
     def emit_export_template_button_clicked_signal(self) -> None:
         self.ICV_export_template_button_clicked_signal.emit()
         
+    def emit_remove_background_button_clicked_signal(self) -> None:
+        self.ICV_remove_background_button_clicked_signal.emit()
+        
+    def hide_remove_background_button(self):
+        self.remove_background_button.hide()
+        
+    def show_remove_background_button(self):  
+        self.remove_background_button.show()
+        
+    def hide_loading_remove_background_label(self):
+        self.loading_remove_background_label.hide()
+        self.loading_remove_background_gif.stop()
+        
+    def show_loading_remove_background_label(self):
+        self.loading_remove_background_label.show()
+        self.loading_remove_background_gif.start()
+
+
 
     def update_preview_image_gui(self, frame: MatLike) -> None:
         h, w, ch = frame.shape

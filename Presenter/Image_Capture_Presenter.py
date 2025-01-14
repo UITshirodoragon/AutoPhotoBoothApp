@@ -1,5 +1,5 @@
 from __future__ import annotations
-from PyQt5.QtCore import QTimer, Qt, QPropertyAnimation, QSequentialAnimationGroup
+from PyQt5.QtCore import QTimer, Qt, pyqtSignal, QObject, QPropertyAnimation, QSequentialAnimationGroup, QThread
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtWidgets import QStackedWidget, QLabel, QHBoxLayout, QGraphicsOpacityEffect
 
@@ -9,6 +9,8 @@ from Model.User_Model import UserModel, User
 from Model.Template_Model import TemplateModel
 from Model.Image_Model import ImageModel
 from Model.Template_Export_Model import TemplateExportModel
+from Model.Sound_Effect_Model import SoundWorker
+from Model.Background_Remover_Model import BackgroundRemoverWorker
 
 from Presenter.Mediator import IMediator, ConcreteMediator
 
@@ -18,7 +20,12 @@ from typing import Protocol
 from cv2.typing import MatLike
 
 
-class ImageCapturePresenter:
+class ImageCapturePresenter(QObject):
+    
+    removed_background_image_info_signal = pyqtSignal(dict)
+    start_to_remove_background_signal = pyqtSignal()
+    
+    
     def __init__(self, model: ImageCaptureModel,
                  view: ImageCaptureView,
                  stack_view: QStackedWidget,
@@ -27,6 +34,7 @@ class ImageCapturePresenter:
                 image_control_model: ImageModel,
                 template_export_model: TemplateExportModel
                  ) -> None:
+        super().__init__()
         self.view = view
         self.model = model
         self.stack_view = stack_view
@@ -51,6 +59,8 @@ class ImageCapturePresenter:
         self.countdown_time = self.time_left
         
         self.deleted_image_indexes: list[int] = []
+        
+        self.remove_background_status = False
 
         # Thiết lập QTimer để cập nhật frame liên tục
         self.frame_update_timer = QTimer()
@@ -62,8 +72,35 @@ class ImageCapturePresenter:
         self.view.ICV_next_button_signal.connect(self.handle_next_button_clicked)
         self.view.ICV_capture_button_signal.connect(self.handle_capture_button_clicked)
         self.view.ICV_export_template_button_clicked_signal.connect(self.handle_export_template_button_clicked)
+        self.view.ICV_remove_background_button_clicked_signal.connect(self.handle_remove_background_button_clicked)
 
+        self.sound_worker = SoundWorker("View/Sound/camera_shutter.wav")
+        self.init_remove_background_worker()
 
+    def init_remove_background_worker(self):
+        self.background_remover_worker = BackgroundRemoverWorker()
+        self.background_remover_worker_thread = QThread()
+        self.background_remover_worker.moveToThread(self.background_remover_worker_thread)
+        
+        self.background_remover_worker_thread.started.connect(self.background_remover_worker.run)
+        # self.background_remover_worker.error.connect(self.background_remover_worker_error)
+        self.background_remover_worker.finished_signal.connect(self.handle_done_remove_background)
+        self.removed_background_image_info_signal.connect(self.background_remover_worker.receive_image_info)
+        self.start_to_remove_background_signal.connect(self.background_remover_worker.start_remove_background)
+        
+        self.background_remover_worker_thread.start()
+    
+    
+    def handle_done_remove_background(self, number_of_images: int):
+        if(number_of_images == self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id, 'number_of_images')):
+            self.view.hide_loading_remove_background_label()
+            self.view.show_remove_background_button()
+
+    
+    def handle_remove_background_button_clicked(self):
+        self.remove_background_status = not self.remove_background_status
+        print(self.remove_background_status)
+    
     def handle_start_countdown(self):
         self.countdown_timer = QTimer()
         self.countdown_timer.timeout.connect(self.handle_update_countdown)
@@ -75,7 +112,12 @@ class ImageCapturePresenter:
             self.view.update_countdown_number_label_gui(f"View/Icon/number_{self.time_left}_icon.png")
             self.view.animate_countdown_number_label_gui()
             self.time_left -= 1
+            if(self.time_left == 0):
+                pass
+                
+                
         else:
+            self.sound_worker.start()
             self.countdown_timer.stop()
             self.time_left = self.countdown_time
             self.view.countdown_number_label.clear()
@@ -126,7 +168,7 @@ class ImageCapturePresenter:
         self.frame_update_timer.stop()
         
         if self.user_control_model.get_user().image_count == self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id, 'number_of_images') and self.is_image_gallery_change:
-            self.mediator.notify(sender = 'image_capture_presenter', receiver = 'template_export_presenter', event = 'update_final_template_with_images')
+            self.mediator.notify(sender = 'image_capture_presenter', receiver = 'template_export_presenter', event = 'update_final_template_with_images', data = {"remove_background": self.remove_background_status})
             self.is_image_gallery_change = False
         else:
             self.mediator.notify(sender = 'image_capture_presenter', receiver = 'template_export_presenter', event = 'start_qr_code_countdown_timer')
@@ -137,9 +179,11 @@ class ImageCapturePresenter:
     def handle_capture_button_clicked(self) -> None:
         
         if self.user_control_model.get_user().image_count < self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id, 'number_of_images'):
-            
+            if(self.user_control_model.get_user().image_count == 0):
+                self.view.show_loading_remove_background_label()
             self.handle_start_countdown()
             self.is_image_gallery_change = True
+            
             # image_capture_timer = QTimer()
             # image_capture_timer.singleShot(self.countdown_time * 1000 + 500, self.handle_capture_and_save_and_update_image_gallery)
         
@@ -164,8 +208,15 @@ class ImageCapturePresenter:
             self.image_control_model.insert_image_into_database(f"image{self.user_control_model.get_user().image_count}.png",
                                                                 self.user_control_model.get_user().gallery_folder_path + f"/image{self.user_control_model.get_user().image_count}.png",
                                                                 (2592,1944),
-                                                                self.user_control_model.get_user().gallery_folder_path + f"/template_with_image{self.user_control_model.get_user().image_count}.png"
+                                                                self.user_control_model.get_user().gallery_folder_path + f"/template_with_image{self.user_control_model.get_user().image_count}.png",
+                                                                self.user_control_model.get_user().gallery_folder_path + f"/removed_background_image{self.user_control_model.get_user().image_count}.png"
                                                                 )
+            
+            # removed_background
+            self.removed_background_image_info_signal.emit(self.image_control_model.get_image_from_database(self.user_control_model.get_user().image_count + 1))
+            self.start_to_remove_background_signal.emit()
+            
+            
             
             self.template_export_model.export_template_with_a_image(self.template_control_model.get_template_from_database(self.template_control_model.selected_template_id),
                                                                     self.image_control_model.get_image_from_database(self.user_control_model.get_user().image_count + 1),
@@ -270,7 +321,8 @@ class ImageCapturePresenter:
                                                               name = f"image{index_of_image - 1}.png",
                                                               path = self.user_control_model.get_user().gallery_folder_path + f"/image{index_of_image - 1}.png",
                                                               size = (2592,1944),
-                                                             template_with_image_path=self.user_control_model.get_user().gallery_folder_path + f"/template_with_image{index_of_image - 1}.png"
+                                                             template_with_image_path=self.user_control_model.get_user().gallery_folder_path + f"/template_with_image{index_of_image - 1}.png",
+                                                                removed_background_image_path=self.user_control_model.get_user().gallery_folder_path + f"/removed_background_image{index_of_image - 1}.png"
                                                                 )
             
             self.template_export_model.export_template_with_a_image(self.template_control_model.get_template_from_database(self.template_control_model.selected_template_id),

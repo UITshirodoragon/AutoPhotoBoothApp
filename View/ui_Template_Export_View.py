@@ -39,7 +39,7 @@ class Ui_TemplateExportView(object):
         self.template_show_label = QLabel(TemplateExportView)
         self.template_show_label.setObjectName(u"template_show_label")
         self.template_show_label.setGeometry(QRect(25, 150, 1030, 1030))
-        self.template_show_label.setStyleSheet(u"background-color: rgb(85, 170, 127);")
+        self.template_show_label.setStyleSheet(u"background-color: rgb(125, 125, 125);")
         self.template_show_label.setScaledContents(False)
         self.template_show_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.scan_text_label = QLabel(TemplateExportView)

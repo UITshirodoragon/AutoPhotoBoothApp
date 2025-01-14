@@ -36,7 +36,7 @@ class TemplateExportPresenter(Protocol):
     def set_mediator(self, mediator: IMediator) -> None:
         ...
         
-    def handle_update_final_template_with_images(self) -> None:
+    def handle_update_final_template_with_images(self, data) -> None:
         ...
         
     def handle_start_qr_code_countdown_timer(self) -> None:
@@ -81,7 +81,7 @@ class ConcreteMediator(IMediator):
     def notify(self, sender: str, receiver: str, event: str, data: dict = None) -> None:
         if sender == 'image_capture_presenter' and receiver == 'template_export_presenter':
             if event == 'update_final_template_with_images':
-                self.template_export_presenter.handle_update_final_template_with_images()
+                self.template_export_presenter.handle_update_final_template_with_images(data['remove_background'])
             if event == 'start_qr_code_countdown_timer':
                 self.template_export_presenter.handle_start_qr_code_countdown_timer()
             
