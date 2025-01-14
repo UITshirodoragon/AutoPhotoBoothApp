@@ -20,7 +20,8 @@ class ImageModel:
             name TEXT,
             path TEXT,
             size TEXT,
-            template_with_image_path TEXT
+            template_with_image_path TEXT,
+            removed_background_image_path TEXT
         )
         ''')
         
@@ -30,7 +31,8 @@ class ImageModel:
     def insert_image_into_database(self, name: str, 
                                    path: str, 
                                    size: tuple,
-                                   template_with_image_path: str) -> None:
+                                   template_with_image_path: str,
+                                   removed_background_image_path: str) -> None:
         conn = sqlite3.connect(self.database_path)
         cursor = conn.cursor()
         
@@ -40,14 +42,16 @@ class ImageModel:
             name, 
             path, 
             size,
-            template_with_image_path
+            template_with_image_path,
+            removed_background_image_path
         )
-        VALUES (?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?)
         ''', (
             name, 
             path, 
             json.dumps(size),
-            template_with_image_path
+            template_with_image_path,
+            removed_background_image_path
               )
         )
         
@@ -58,7 +62,9 @@ class ImageModel:
                                              name: str,
                                              path: str,
                                                 size: tuple,
-                                                template_with_image_path: str) -> None:
+                                                template_with_image_path: str,
+                                                removed_background_image_path: str
+                                                ) -> None:
         conn = sqlite3.connect(self.database_path)
         cursor = conn.cursor()
         
@@ -69,15 +75,17 @@ class ImageModel:
             name, 
             path, 
             size,
-            template_with_image_path
+            template_with_image_path,
+            removed_background_image_path
         )
-        VALUES (?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?)
         ''', (
             id,
             name, 
             path, 
             json.dumps(size),
-            template_with_image_path
+            template_with_image_path,
+            removed_background_image_path
               )
         )
         
@@ -93,7 +101,7 @@ class ImageModel:
         
         conn.close()
         
-        return dict(id=image[0], name=image[1], path=image[2], size=tuple(json.loads(image[3])), template_with_image_path=image[4])
+        return dict(id=image[0], name=image[1], path=image[2], size=tuple(json.loads(image[3])), template_with_image_path=image[4], removed_background_image_path=image[5])
 
     def get_image_with_field_from_database(self, id, field = None):
         conn = sqlite3.connect(self.database_path)
@@ -108,7 +116,7 @@ class ImageModel:
             print('Image not found')
             return None
         if field == None:
-            return dict(id=image[0], name=image[1], path=image[2], size=tuple(json.loads(image[3])))
+            return dict(id=image[0], name=image[1], path=image[2], size=tuple(json.loads(image[3])), template_with_image_path=image[4], removed_background_image_path=image[5])
         elif field == 'name':
             return image[1]
         elif field == 'path':
@@ -117,6 +125,8 @@ class ImageModel:
             return tuple(json.loads(image[3]))
         elif field == 'template_with_image_path':
             return image[4]
+        elif field == 'removed_background_image_path':
+            return image[5]
         else:
             print('Field not found')
             return None
@@ -149,7 +159,7 @@ class ImageModel:
         
         conn.close()
         
-        images = [dict(id=image[0], name=image[1], path=image[2], size=tuple(json.loads(image[3])), template_with_image_path = image[4]) for image in images]
+        images = [dict(id=image[0], name=image[1], path=image[2], size=tuple(json.loads(image[3])), template_with_image_path = image[4], removed_background_image_path=image[5]) for image in images]
         
         return images
 
@@ -157,7 +167,8 @@ class ImageModel:
                                  name: str = None,
                                  path: str = None,
                                  size: tuple = None,
-                                 template_with_image_path: str = None
+                                 template_with_image_path: str = None,
+                                    removed_background_image_path: str = None
                                  ) -> None:
         conn = sqlite3.connect(self.database_path)
         cursor = conn.cursor()
@@ -189,6 +200,14 @@ class ImageModel:
             SET template_with_image_path = ?
             WHERE id = ?
             ''', (template_with_image_path, id))
+            
+            
+        if removed_background_image_path is not None:
+            cursor.execute('''
+            UPDATE images
+            SET removed_background_image_path = ?
+            WHERE id = ?
+            ''', (removed_background_image_path, id))
             
         conn.commit()
         conn.close()

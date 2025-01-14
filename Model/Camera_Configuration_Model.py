@@ -27,8 +27,8 @@ class CameraConfigurationModel:
     def init_camera(self) -> bool:
         try:
             if plf.system() == "Windows":
-                self.camera = cv2.VideoCapture(0)
-                self.camera.set(cv2.CAP_PROP_FPS, 60)  # Cài đặt FPS mong muốn
+                self.camera = cv2.VideoCapture(1)
+                # self.camera.set(cv2.CAP_PROP_FPS, 60)  # Cài đặt FPS mong muốn
             if plf.system() == "Linux":
                 # init camera from Picamera2
                 self.Picamera = Picamera2()

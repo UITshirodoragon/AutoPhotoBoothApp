@@ -19,7 +19,8 @@ class TemplateExportModel():
     def export_template_with_images(self, template: dict, 
                                     user: User , 
                                     progress_emit_signal_function = None, 
-                                    finished_emit_signal_function = None
+                                    finished_emit_signal_function = None,
+                                    remove_background = False
                                     ) -> None:
         img_index = 0
        
@@ -28,8 +29,14 @@ class TemplateExportModel():
         for pos in img_pos_list:
             
             print(user.gallery_folder_path + f"/image{img_index}.png")
-            img = Image.open(user.gallery_folder_path + f"/image{img_index}.png").resize(tuple(json.loads(template['image_size'])))
-            background.paste(img, tuple(pos))   # change list to tuple
+            img = None
+            mask = None
+            if not remove_background:
+                img = Image.open(user.gallery_folder_path + f"/image{img_index}.png").resize(tuple(json.loads(template['image_size'])))
+            else:
+                img = Image.open(user.gallery_folder_path + f"/removed_background_image{img_index}.png").resize(tuple(json.loads(template['image_size'])))
+                mask = img.split()[3]
+            background.paste(img, tuple(pos), mask = mask)   # change list to tuple
             
             img_index += 1
             if progress_emit_signal_function is not None:
@@ -68,12 +75,14 @@ class TemplateExportWorker(QThread):
                  template_export_model: TemplateExportModel,
                  google_drive_model: GoogleDriveModel,
                  template: dict, 
-                 user: User):
+                 user: User,
+                 remove_background:bool):
         super().__init__()
         self.template: dict = template
         self.user: User = user
         self.template_export_model = template_export_model
         self.GoogleDriveModel = google_drive_model
+        self.remove_background = remove_background
         
     def set_template(self, template: dict):
         self.template = template
@@ -82,7 +91,7 @@ class TemplateExportWorker(QThread):
         self.user = user
         
     def run(self):
-        self.template_export_model.export_template_with_images(self.template, self.user, self.TEW_progress_signal.emit, self.TEW_finished_signal.emit)
+        self.template_export_model.export_template_with_images(self.template, self.user, self.TEW_progress_signal.emit, self.TEW_finished_signal.emit, self.remove_background)
         current_time = datetime.datetime.now()
         template_drive_file_id = self.GoogleDriveModel.Upload(f"final_user_{self.user.id}_{current_time.strftime('%d%m%Y_%H%M%S')}.png", self.user.gallery_folder_path + f'/final_user_{self.user.id}.png', 'cloud_drive_folder')
         self.TEW_progress_signal.emit(80)

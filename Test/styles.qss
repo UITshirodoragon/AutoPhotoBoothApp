@@ -1,0 +1,104 @@
+QMainWindow {
+    background-color: #f0f0f0;
+}
+
+QFrame#main_frame {
+    background-color: #ffffff;
+    border: 2px solid #cccccc;
+    border-radius: 10px;
+}
+
+QWidget#container {
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+}
+
+QWidget#widget_0 {
+    background-color: lightblue;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+QWidget#widget_1 {
+    background-color: lightgreen;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+/* Add more styles for other widgets */
+QWidget#widget_2 {
+    background-color: lightcoral;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+QWidget#widget_3 {
+    background-color: lightgoldenrodyellow;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+QWidget#widget_4 {
+    background-color: lightpink;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+QWidget#widget_5 {
+    background-color: lightgray;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+QWidget#widget_6 {
+    background-color: lightcyan;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+QWidget#widget_7 {
+    background-color: lightsalmon;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+QWidget#widget_8 {
+    background-color: lightseagreen;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+QWidget#widget_9 {
+    background-color: lightskyblue;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+QPushButton {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 14px;
+}
+
+QPushButton:hover {
+    background-color: #45a049;
+}
+
+QPushButton:pressed {
+    background-color: #3e8e41;
+}
+
+QLabel {
+    font-size: 16px;
+    color: #333333;
+}
+
+QFrame#info_widget {
+    background-color: #fff8dc;
+    border: 1px solid #cccccc;
+    border-radius: 10px;
+}
