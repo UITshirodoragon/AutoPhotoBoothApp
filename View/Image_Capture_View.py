@@ -20,6 +20,8 @@ class ImageCaptureView(QWidget, Ui_Image_Capture_View ):
     def __init__(self) -> None:
         super().__init__()
         
+        self.is_loading_remove_background = False
+        
         self.setupUi(self)
         
         self.image_gallery_container_widget = QWidget(self.image_gallery_frame)       
@@ -79,10 +81,12 @@ class ImageCaptureView(QWidget, Ui_Image_Capture_View ):
         self.remove_background_button.show()
         
     def hide_loading_remove_background_label(self):
+        self.is_loading_remove_background = False
         self.loading_remove_background_label.hide()
         self.loading_remove_background_gif.stop()
         
     def show_loading_remove_background_label(self):
+        self.is_loading_remove_background = True
         self.loading_remove_background_label.show()
         self.loading_remove_background_gif.start()
 

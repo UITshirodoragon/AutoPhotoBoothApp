@@ -93,14 +93,23 @@ class ImageCapturePresenter(QObject):
         self.background_remover_worker_thread.start()
     
     
+    def handle_hide_remove_background_button_for_a_new_user(self):
+        self.view.hide_remove_background_button()
+        self.view.remove_background_button.setChecked(False)
+        self.remove_background_status = False
+    
     def handle_done_remove_background(self, number_of_images: int):
-        if(number_of_images == self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id, 'number_of_images')):
+        if(self.user_control_model.get_user().image_count == self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id, 'number_of_images')
+           ):
             self.view.hide_loading_remove_background_label()
             self.view.show_remove_background_button()
 
     
     def handle_remove_background_button_clicked(self):
         self.remove_background_status = not self.remove_background_status
+        if(self.is_image_gallery_change == False):
+            self.is_image_gallery_change = True
+        # have some wrong that can export the final product many times!
         print(self.remove_background_status)
     
     def handle_start_countdown(self):
@@ -181,8 +190,9 @@ class ImageCapturePresenter(QObject):
     def handle_capture_button_clicked(self) -> None:
         
         if self.user_control_model.get_user().image_count < self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id, 'number_of_images'):
-            if(self.user_control_model.get_user().image_count == 0):
+            if(self.view.is_loading_remove_background == False):
                 self.view.show_loading_remove_background_label()
+                self.view.hide_remove_background_button()
             self.handle_start_countdown()
             self.is_image_gallery_change = True
             
@@ -326,6 +336,12 @@ class ImageCapturePresenter(QObject):
                                                              template_with_image_path=self.user_control_model.get_user().gallery_folder_path + f"/template_with_image{index_of_image - 1}.png",
                                                                 removed_background_image_path=self.user_control_model.get_user().gallery_folder_path + f"/removed_background_image{index_of_image - 1}.png"
                                                                 )
+            
+            # removed_background
+            self.removed_background_image_info_signal.emit(self.image_control_model.get_image_from_database(index_of_image))
+            self.start_to_remove_background_signal.emit()
+            
+            
             
             self.template_export_model.export_template_with_a_image(self.template_control_model.get_template_from_database(self.template_control_model.selected_template_id),
                                                                     self.image_control_model.get_image_from_database(index_of_image),

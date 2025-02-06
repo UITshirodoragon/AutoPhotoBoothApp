@@ -26,6 +26,9 @@ class ImageCapturePresenter(Protocol):
         
     def handle_delete_image_in_gallery(self, index_of_image: int) -> None:
         ...
+        
+    def handle_hide_remove_background_button_for_a_new_user(self) -> None:
+        ...
     
 class TemplateMenuPresenter(Protocol):
     def set_mediator(self, mediator: IMediator) -> None:
@@ -95,7 +98,10 @@ class ConcreteMediator(IMediator):
                 
             if event == 'start_preview_process':
                 self.image_capture_presenter.handle_start_update_preview_image()
-                
+
+            if event == 'hide_remove_background_button_for_a_new_user':
+                self.image_capture_presenter.handle_hide_remove_background_button_for_a_new_user()
+                                
         if sender == 'start_presenter' and receiver == 'image_capture_presenter':
             if event == 'stop_preview_process':
                 self.image_capture_presenter.handle_stop_update_preview_image()
