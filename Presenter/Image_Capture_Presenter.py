@@ -76,6 +76,8 @@ class ImageCapturePresenter(QObject):
 
         self.sound_worker = SoundWorker("View/Sound/camera_shutter.wav")
         self.init_remove_background_worker()
+        
+        self.model.set_template_control_model(template_control_model)
 
     def init_remove_background_worker(self):
         self.background_remover_worker = BackgroundRemoverWorker()

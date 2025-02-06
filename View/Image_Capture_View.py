@@ -89,9 +89,9 @@ class ImageCaptureView(QWidget, Ui_Image_Capture_View ):
 
 
     def update_preview_image_gui(self, frame: MatLike) -> None:
-        h, w, ch = frame.shape
-        bytes_per_line = ch * w
-        image = QImage(frame.data, w, h, bytes_per_line, QImage.Format_RGB888)
+        height, width, channel = frame.shape
+        bytesPerLine = channel * width
+        image = QImage(frame.data.tobytes(), width, height, bytesPerLine, QImage.Format_BGR888)
         # self.preview_reigion.setPixmap(QPixmap.fromImage(image))
         self.preview_image_label.setPixmap(QPixmap.fromImage(image).scaled(1080,1440, Qt.KeepAspectRatio))
 

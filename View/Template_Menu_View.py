@@ -27,7 +27,7 @@ class TemplateMenuView(QWidget, Ui_TemplateMenuView):
         self.template_menu_container_widget = QWidget(self.template_menu_frame)
         
         
-        template_pixmap = QPixmap("Data/Template/template1.png")
+        template_pixmap = QPixmap("Data/Template/test_template_2x1.png")
         scaled_template_pixmap = template_pixmap.scaled(1030,1030, Qt.KeepAspectRatio)
         self.template_show_label.setPixmap(scaled_template_pixmap)
         

@@ -1,2 +1,8 @@
 # Bỏ qua tất cả các tệp trong thư mục GoogleDriveAuth
 GoogleDriveAuth/
+View/__pycache__
+Presenter/__pycache__
+Model/__pycache__
+dist/
+build/
+AI_Test/

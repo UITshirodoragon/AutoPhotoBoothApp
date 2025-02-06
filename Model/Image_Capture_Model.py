@@ -111,3 +111,5 @@ class ImageCaptureModel:
         #     self.camera.stop_camera()
         #     self.preview_image_process.terminate()
     
+    def set_template_control_model(self, template_control_model: TemplateModel) -> None:
+        self.camera.template_control_model = template_control_model
