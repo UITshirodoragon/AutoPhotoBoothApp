@@ -26,6 +26,9 @@ class ImageCapturePresenter(Protocol):
         
     def handle_delete_image_in_gallery(self, index_of_image: int) -> None:
         ...
+        
+    def handle_hide_remove_background_button_for_a_new_user(self) -> None:
+        ...
     
 class TemplateMenuPresenter(Protocol):
     def set_mediator(self, mediator: IMediator) -> None:
@@ -36,7 +39,7 @@ class TemplateExportPresenter(Protocol):
     def set_mediator(self, mediator: IMediator) -> None:
         ...
         
-    def handle_update_final_template_with_images(self) -> None:
+    def handle_update_final_template_with_images(self, data) -> None:
         ...
         
     def handle_start_qr_code_countdown_timer(self) -> None:
@@ -81,7 +84,7 @@ class ConcreteMediator(IMediator):
     def notify(self, sender: str, receiver: str, event: str, data: dict = None) -> None:
         if sender == 'image_capture_presenter' and receiver == 'template_export_presenter':
             if event == 'update_final_template_with_images':
-                self.template_export_presenter.handle_update_final_template_with_images()
+                self.template_export_presenter.handle_update_final_template_with_images(data['remove_background'])
             if event == 'start_qr_code_countdown_timer':
                 self.template_export_presenter.handle_start_qr_code_countdown_timer()
             
@@ -95,7 +98,10 @@ class ConcreteMediator(IMediator):
                 
             if event == 'start_preview_process':
                 self.image_capture_presenter.handle_start_update_preview_image()
-                
+
+            if event == 'hide_remove_background_button_for_a_new_user':
+                self.image_capture_presenter.handle_hide_remove_background_button_for_a_new_user()
+                                
         if sender == 'start_presenter' and receiver == 'image_capture_presenter':
             if event == 'stop_preview_process':
                 self.image_capture_presenter.handle_stop_update_preview_image()

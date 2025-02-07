@@ -8,7 +8,7 @@ from PyQt5.QtGui import QImage, QPixmap
 
 
 def capture_frames(queue):
-    cvcam = cv2.VideoCapture(0)
+    cvcam = cv2.VideoCapture(1)
 
     while True:
         _, frame = cvcam.read()

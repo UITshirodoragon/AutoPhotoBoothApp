@@ -162,7 +162,7 @@ if __name__ == "__main__":
     if(plf.system() == "Windows"):
         if len(screens) > 1:
             secondary_screen = screens[1]
-            main_widget = handle_app_show_on_portrait_screen(secondary_screen, stack_view)
+            main_widget = handle_app_show_on_landscape_screen(secondary_screen, stack_view)
             main_widget.showFullScreen()
         else:
             print("Không tìm thấy màn hình phụ.")

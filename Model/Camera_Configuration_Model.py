@@ -6,6 +6,9 @@ from typing import Protocol, Callable
 import numpy
 import cv2
 from cv2.typing import MatLike
+
+from Model.Template_Model import TemplateModel
+
 try:
     if plf.system() == "Linux":
         from picamera2 import Picamera2
@@ -24,11 +27,54 @@ class CameraConfigurationModel:
         self.just_captured_image_path: str = None
         self.captured_and_saved_images_count: int = 1
         
+        self.template_control_model: TemplateModel = None
+        
+        # camera dell precision 3520 with resolution 640x480 (width x height)
+        self.window_camera_ratio_resolution_config: dict = {
+            "4:3": {
+            "position": (0, 0),
+            "size": (640, 480)
+            },
+            "3:4": {
+            "position": (140, 0),
+            "size": (360, 480)
+            },
+            "1:1": {
+            "position": (80, 0),
+            "size": (480, 480)
+            },
+            "2:3": {
+            "position": (160, 0),
+            "size": (320, 480)
+            }
+        }
+        
+        
+        # pi camera v1 with resolution 2592x1944
+        self.linux_camera_ratio_resolution_config: dict = {
+            "4:3": {
+            "position": (0, 0),
+            "size": (1034, 768)
+            },
+            "3:4": {
+            "position": (224, 0),
+            "size": (576, 480)
+            },
+            "1:1": {
+            "position": (128, 0),
+            "size": (768, 768)
+            },
+            "2:3": {
+            "position": (256, 0),
+            "size": (512, 480)
+            }
+        }
+        
     def init_camera(self) -> bool:
         try:
             if plf.system() == "Windows":
-                self.camera = cv2.VideoCapture(0)
-                self.camera.set(cv2.CAP_PROP_FPS, 60)  # Cài đặt FPS mong muốn
+                self.camera = cv2.VideoCapture(1)
+                # self.camera.set(cv2.CAP_PROP_FPS, 60)  # Cài đặt FPS mong muốn
             if plf.system() == "Linux":
                 # init camera from Picamera2
                 self.Picamera = Picamera2()
@@ -99,6 +145,10 @@ class CameraConfigurationModel:
                 ret, frame = self.camera.read()
                 if ret:
                     frame = cv2.flip(frame, 1)
+                    frame = self.crop_image(frame, 
+                                            self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id, 'image_ratio'),
+                                            "Windows"
+                                            )
                     
             if plf.system() == "Linux":
                 frame = self.Picamera.capture_array("main")
@@ -122,6 +172,11 @@ class CameraConfigurationModel:
             if plf.system() == 'Windows':
                 
                 _, image = self.camera.read()
+                
+                image = self.crop_image(image, 
+                                            self.template_control_model.get_template_with_field_from_database(self.template_control_model.selected_template_id, 'image_ratio'),
+                                            "Windows"
+                                            )
                 cv2.imwrite(self.just_captured_image_path, image)
                 
             elif plf.system() == 'Linux':
@@ -144,6 +199,22 @@ class CameraConfigurationModel:
             # thay the bang log sau
             print(f"Lỗi: {e}") 
         # self.captured_and_saved_images_count += 1
+    
+    def crop_image(self, image: MatLike, ratio: str, camera: str) -> MatLike:
+        x: int = 0
+        y: int = 0
+        w: int = 0
+        h: int = 0
+        if camera == "Windows":
+            x, y = self.window_camera_ratio_resolution_config[ratio]["position"]
+            w, h = self.window_camera_ratio_resolution_config[ratio]["size"]
+            cropped_image: MatLike = image[y:y+h, x:x+w]
+            cropped_image.shape = (h, w, 3)
+            return cropped_image
+        elif camera == "Linux":
+            # dev later
+            return image
+            
     
 
     def stop_camera(self) -> None:

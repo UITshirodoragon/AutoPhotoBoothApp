@@ -42,6 +42,8 @@ class TemplateExportPresenter:
         
         self.is_update_final_template_with_images_finished = False
         
+        self.remove_background = False
+        
         self.minute = 1
         self.second = 30
         self.qr_code_countdown_initial_time = QTime(0, self.minute, self.second)
@@ -72,7 +74,8 @@ class TemplateExportPresenter:
         self.template_export_worker = TemplateExportWorker(self.model, 
                                                            self.google_drive_model,
                                                             self.template_control_model.get_template_from_database(self.template_control_model.selected_template_id), 
-                                                            self.user_control_model.get_user())
+                                                            self.user_control_model.get_user(),
+                                                            self.remove_background)
         
         self.template_export_worker.TEW_progress_signal.connect(self.view.update_process_export_final_template_progress_bar_gui)
         self.template_export_worker.TEW_finished_signal.connect(self.handle_finish_template_export_worker)
@@ -119,8 +122,10 @@ class TemplateExportPresenter:
         self.is_update_final_template_with_images_finished = False
         if self.mediator:
             self.mediator.notify('template_export_presenter', 'image_capture_presenter', 'clear_image_gallery_label')
-    
-    def handle_update_final_template_with_images(self) -> None:
+            self.mediator.notify('template_export_presenter', 'image_capture_presenter', 'hide_remove_background_button_for_a_new_user')
+            
+    def handle_update_final_template_with_images(self, data) -> None:
+        self.remove_background = data
         self.view.hide_all_widgets()
         self.handle_start_template_export_worker()
         # self.model.export_template_with_images(self.template_control_model.get_template_from_database(self.template_control_model.selected_template_id), self.user_control_model.get_user())
