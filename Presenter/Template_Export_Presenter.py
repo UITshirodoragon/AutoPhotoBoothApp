@@ -122,7 +122,8 @@ class TemplateExportPresenter:
         self.is_update_final_template_with_images_finished = False
         if self.mediator:
             self.mediator.notify('template_export_presenter', 'image_capture_presenter', 'clear_image_gallery_label')
-    
+            self.mediator.notify('template_export_presenter', 'image_capture_presenter', 'hide_remove_background_button_for_a_new_user')
+            
     def handle_update_final_template_with_images(self, data) -> None:
         self.remove_background = data
         self.view.hide_all_widgets()

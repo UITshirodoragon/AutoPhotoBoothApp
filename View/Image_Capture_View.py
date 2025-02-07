@@ -20,6 +20,8 @@ class ImageCaptureView(QWidget, Ui_Image_Capture_View ):
     def __init__(self) -> None:
         super().__init__()
         
+        self.is_loading_remove_background = False
+        
         self.setupUi(self)
         
         self.image_gallery_container_widget = QWidget(self.image_gallery_frame)       
@@ -79,19 +81,21 @@ class ImageCaptureView(QWidget, Ui_Image_Capture_View ):
         self.remove_background_button.show()
         
     def hide_loading_remove_background_label(self):
+        self.is_loading_remove_background = False
         self.loading_remove_background_label.hide()
         self.loading_remove_background_gif.stop()
         
     def show_loading_remove_background_label(self):
+        self.is_loading_remove_background = True
         self.loading_remove_background_label.show()
         self.loading_remove_background_gif.start()
 
 
 
     def update_preview_image_gui(self, frame: MatLike) -> None:
-        h, w, ch = frame.shape
-        bytes_per_line = ch * w
-        image = QImage(frame.data, w, h, bytes_per_line, QImage.Format_RGB888)
+        height, width, channel = frame.shape
+        bytesPerLine = channel * width
+        image = QImage(frame.data.tobytes(), width, height, bytesPerLine, QImage.Format_BGR888)
         # self.preview_reigion.setPixmap(QPixmap.fromImage(image))
         self.preview_image_label.setPixmap(QPixmap.fromImage(image).scaled(1080,1440, Qt.KeepAspectRatio))
 

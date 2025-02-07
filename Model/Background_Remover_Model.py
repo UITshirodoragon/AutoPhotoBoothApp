@@ -42,12 +42,12 @@ class BackgroundRemoverWorker(QObject):
     def remove_background(self, image_info: dict):
         input = cv2.imread(image_info['path'])
     
-        output = remove(input, session=self.session,
-                        alpha_matting=True, 
-                        alpha_matting_foreground_threshold=220, 
-                        alpha_matting_background_threshold=10,
-                        alpha_matting_erode_size=10,
-                        post_process_mask=True)
+        output = remove(input, session=self.session)
+                        # alpha_matting=True, 
+                        # alpha_matting_foreground_threshold=220, 
+                        # alpha_matting_background_threshold=10,
+                        # alpha_matting_erode_size=10,
+                        # post_process_mask=True)
         
         cv2.imwrite(image_info['removed_background_image_path'], output)
 
