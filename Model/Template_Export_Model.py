@@ -6,6 +6,7 @@ from Model.Google_Drive_Model import GoogleDriveModel
 from PIL import Image
 from Model.User_Model import User
 import json
+import os
 import time
 from PyQt5.QtCore import pyqtSignal, QThread
 import datetime
@@ -23,8 +24,13 @@ class TemplateExportModel():
                                     remove_background = False
                                     ) -> None:
         img_index = 0
-       
-        background = Image.open(template['path'])
+        background_layer = None
+        if not os.path.exists(template['background_path']):
+            background_layer = Image.new('RGBA', tuple(json.loads(template['size'])), (255, 223, 186, 255))
+        else:
+            background_layer = Image.open(template['background_path'])
+        
+        template_layer = Image.open(template['path'])
         img_pos_list = json.loads(template['image_positions_list'])     # type list of list
         for pos in img_pos_list:
             
@@ -36,7 +42,7 @@ class TemplateExportModel():
             else:
                 img = Image.open(user.gallery_folder_path + f"/removed_background_image{img_index}.png").resize(tuple(json.loads(template['image_size'])))
                 mask = img.split()[3]
-            background.paste(img, tuple(pos), mask = mask)   # change list to tuple
+            background_layer.paste(img, tuple(pos), mask = mask)   # change list to tuple
             
             img_index += 1
             if progress_emit_signal_function is not None:
@@ -47,8 +53,8 @@ class TemplateExportModel():
                 # value = (img_index)*100//(template['number_of_images'])
                 
             
-        
-        background.save(user.gallery_folder_path + f'/final_user_{user.id}.png')
+        background_layer.paste(template_layer, (0, 0), mask = template_layer)
+        background_layer.save(user.gallery_folder_path + f'/final_user_{user.id}.png')
          
         # if finished_emit_signal_function is not None:
         #     finished_emit_signal_function()
@@ -58,14 +64,20 @@ class TemplateExportModel():
                                      progress_emit_signal_function = None, 
                                      finished_emit_signal_function = None
                                      ) -> None:
-        background = Image.open(template['path'])
+        background_layer = None
+        if not os.path.exists(template['background_path']):
+            background_layer = Image.new('RGBA', tuple(json.loads(template['size'])), (255, 223, 186, 255))
+        else:
+            background_layer = Image.open(template['background_path'])        
+        template_layer = Image.open(template['path'])
         img_pos_list = json.loads(template['image_positions_list'])
         
         print(f"add image {image['path']} to template {template['path']}")
         
         img = Image.open(image['path']).resize(tuple(json.loads(template['image_size'])))
-        background.paste(img, tuple(img_pos_list[image['id'] - 1]))   # change list to tuple
-        background.save(image['template_with_image_path'])
+        background_layer.paste(img, tuple(img_pos_list[image['id'] - 1]))   # change list to tuple
+        background_layer.paste(template_layer, (0, 0), mask = template_layer)
+        background_layer.save(image['template_with_image_path'])
         
 class TemplateExportWorker(QThread):
     TEW_progress_signal = pyqtSignal(int)
@@ -101,7 +113,6 @@ class TemplateExportWorker(QThread):
         
         self.GoogleDriveModel.Create_QR(template_drive_file_id, self.user.gallery_folder_path + f'/qr_code_google_drive_user_{self.user.id}.png')
         self.TEW_progress_signal.emit(100)
-        time.sleep(1)
         self.TEW_finished_signal.emit()
         
         # img_index = 0
