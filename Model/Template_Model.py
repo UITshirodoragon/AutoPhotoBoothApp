@@ -23,7 +23,8 @@ class TemplateModel:
             image_positions_list TEXT,
             size TEXT,
             image_size TEXT,
-            image_ratio TEXT
+            image_ratio TEXT,
+            background_path TEXT
         )
         ''')
         
@@ -37,7 +38,8 @@ class TemplateModel:
                                     image_positions_list: list[tuple], 
                                     size: tuple, 
                                     image_size: tuple,
-                                    image_ratio: str
+                                    image_ratio: str,
+                                    background_path: str
                                     ) -> None:
         conn = sqlite3.connect(self.database_path)
         cursor = conn.cursor()
@@ -51,9 +53,10 @@ class TemplateModel:
             image_positions_list, 
             size, 
             image_size,
-            image_ratio
+            image_ratio,
+            background_path
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         ''', (
             path, 
             style, 
@@ -61,7 +64,8 @@ class TemplateModel:
             json.dumps(image_positions_list), 
             json.dumps(size), 
             json.dumps(image_size),
-            image_ratio
+            image_ratio,
+            background_path
               )
         )
         
@@ -116,6 +120,8 @@ class TemplateModel:
             return json.loads(template['image_size'])
         elif field == 'image_ratio':
             return template['image_ratio']
+        elif field == 'background_path':
+            return template['background_path']
         else:
             print("Field not found")
             return None
@@ -132,7 +138,28 @@ class TemplateModel:
         
         conn.commit()
         conn.close()
+    
+    def reset_template_ids_in_database(self) -> None:
+        conn = sqlite3.connect(self.database_path)
+        cursor = conn.cursor()
         
+        cursor.execute('''
+        SELECT id FROM templates ORDER BY id
+        ''')
+        
+        templates = cursor.fetchall()
+        
+        new_id = 1
+        for template in templates:
+            cursor.execute('''
+            UPDATE templates
+            SET id = ?
+            WHERE id = ?
+            ''', (new_id, template[0]))
+            new_id += 1
+        
+        conn.commit()
+        conn.close()
         
     def get_all_templates_from_database(self) -> list[dict]:
         conn = sqlite3.connect(self.database_path)
@@ -158,7 +185,8 @@ class TemplateModel:
                                     image_positions_list: list[tuple] = None, 
                                     size: tuple = None, 
                                     image_size: tuple = None,
-                                    image_ratio: str = None
+                                    image_ratio: str = None,
+                                    background_path: str = None
                                     ) -> None:
         conn = sqlite3.connect(self.database_path)
         cursor = conn.cursor()
@@ -212,6 +240,13 @@ class TemplateModel:
             WHERE id = ?
             ''', (image_ratio, id))
         
+        if background_path != None:
+            cursor.execute('''
+            UPDATE templates 
+            SET background_path = ?
+            WHERE id = ?
+            ''', (background_path, id))
+        
         conn.commit()
         conn.close()
         
@@ -247,17 +282,19 @@ if __name__ == "__main__":
     # cursor.execute("PRAGMA table_info(templates)")
     # columns = [column[1] for column in cursor.fetchall()]
 
-    # if 'image_ratio' not in columns:
+    # if 'background_path' not in columns:
     #     cursor.execute('''
-    #     ALTER TABLE templates ADD COLUMN image_ratio TEXT
+    #     ALTER TABLE templates ADD COLUMN background_path TEXT
     #     ''')
+    # else:
+    #     print("Column 'background_path' already exists")
 
     # conn.commit()
     # conn.close()
     pass
     # template_model = TemplateModel()
     
-    # # # template_model.create_table_in_database()
+    # # template_model.create_table_in_database()
     
     # # # template_model.insert_template_to_database('Data/Template/template1.png', 
     # # #                                            'normal_2grids', 
@@ -267,6 +304,7 @@ if __name__ == "__main__":
     # # #                                            (676, 507)
     # # #                                            )
         
-    # # template = template_model.get_template_from_database(1)
+    # template = template_model.get_template_from_database(1)
+    # template_model.reset_template_ids_in_database()
     # print(template_model.get_all_templates_from_database())
     
